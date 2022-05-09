@@ -5,7 +5,7 @@ import android.content.Context
 import android.widget.Toast
 import com.example.truespotrtlsandroid.models.Credentials
 
-class TrueSpot private constructor()  {
+class TrueSpot  {
 
      val shared = TrueSpot()
 
