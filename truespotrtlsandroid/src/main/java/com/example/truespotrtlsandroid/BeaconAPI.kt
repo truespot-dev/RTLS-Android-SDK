@@ -38,9 +38,9 @@ object BeaconAPI {
 
         val retrofit : Retrofit = Retrofit.Builder()
             .baseUrl(API.authURL)
-            .addConverterFactory(GsonConverterFactory.create(GSON))
-            .addCallAdapterFactory(RxJava2CallAdapterFactory.createWithScheduler(Schedulers.io()))
             .client(okHttpClient)
+            .addConverterFactory(GsonConverterFactory.create(GSON))
+            .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
             .build()
         return retrofit.create(clazz)
 
