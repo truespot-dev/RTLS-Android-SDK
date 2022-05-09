@@ -21,7 +21,7 @@ object BeaconAPI {
     }
 
     private fun <T> getApi(clazz: Class<T>): T {
-        val retrofit: Retrofit.Builder
+       // val retrofit: Retrofit.Builder
         val okHttpClient = OkHttpClient.Builder()
             .addInterceptor { chain ->
                 val original = chain.request()
@@ -36,12 +36,14 @@ object BeaconAPI {
 
 
 
-        retrofit = Retrofit.Builder()
+        val retrofit : Retrofit = Retrofit.Builder()
             .baseUrl(API.authURL)
             .addConverterFactory(GsonConverterFactory.create(GSON))
             .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
             .client(okHttpClient)
-        return retrofit.build().create(clazz)
+            .build()
+        return retrofit.create(clazz)
+
     }
 
     var DATE_FORMAT: SimpleDateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.US)
