@@ -13,11 +13,11 @@ import rx.Observable
 interface BeaconAPIServices {
 
     @POST("/${API.Endpoint.authorization}")
-    fun authenticate(@Query("tenantId") tenantId: String?): Observable<Response<Authorization>>
+    fun authenticate(@Query("tenantId") tenantId: String?): Observable<Response<Authorization?>?>
 
     @GET("/${API.Endpoint.applications}/?self")
-    fun getAppinfo(): Observable<Response<TSApplication>>
+    fun getAppinfo(): Observable<Response<TSApplication?>?>
 
     @GET("/${API.Endpoint.applications}/?self")
-    fun getTrackingDevices(): Observable<Response<TSApplication>>
+    fun getTrackingDevices(): Observable<Response<TSApplication?>?>
 }

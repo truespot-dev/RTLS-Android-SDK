@@ -37,11 +37,10 @@ object BeaconAPI {
 
 
         retrofit = Retrofit.Builder()
-            .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-            .addConverterFactory(GsonConverterFactory.create(GSON))
-            .client(okHttpClient)
             .baseUrl(API.authURL)
-
+            .addConverterFactory(GsonConverterFactory.create(GSON))
+            .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+            .client(okHttpClient)
         return retrofit.build().create(clazz)
     }
 
