@@ -3,6 +3,7 @@ package com.example.truespotrtlsandroid
 import com.example.truespotrtlsandroid.models.Credentials
 import com.fasterxml.jackson.databind.util.ISO8601Utils
 import com.google.gson.*
+import io.reactivex.schedulers.Schedulers
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
@@ -21,7 +22,6 @@ object BeaconAPI {
     }
 
     private fun <T> getApi(clazz: Class<T>): T {
-       // val retrofit: Retrofit.Builder
         val okHttpClient = OkHttpClient.Builder()
             .addInterceptor { chain ->
                 val original = chain.request()
@@ -39,7 +39,7 @@ object BeaconAPI {
         val retrofit : Retrofit = Retrofit.Builder()
             .baseUrl(API.authURL)
             .addConverterFactory(GsonConverterFactory.create(GSON))
-            .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+            .addCallAdapterFactory(RxJava2CallAdapterFactory.createWithScheduler(Schedulers.io()))
             .client(okHttpClient)
             .build()
         return retrofit.create(clazz)
