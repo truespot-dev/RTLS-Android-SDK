@@ -24,9 +24,9 @@ class BeaconServices {
             ?.observeOn(AndroidSchedulers.mainThread())
             ?.subscribe(
                 {
-                    if (it != null && it.isSuccessful) {
-                        var result = it.body()
-                        Credentials.jwt = result!!.jwt
+                    if (it != null) {
+                      //  var result = it.jwt
+                        Credentials.jwt = it.jwt
                         getAppinfo(context,activity)
 
                     }else{
@@ -49,9 +49,9 @@ class BeaconServices {
             ?.subscribeOn(Schedulers.io())
             ?.observeOn(AndroidSchedulers.mainThread())
             ?.subscribe({
-                if(it != null && it.isSuccessful)
+                if(it != null)
                 {
-                    var result = it.body()
+                    //var result = it.body()
                     TSLocationManager(context,activity).startScanning()
                 }
                 else
