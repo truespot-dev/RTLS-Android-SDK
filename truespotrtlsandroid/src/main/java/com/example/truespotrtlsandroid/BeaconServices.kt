@@ -24,9 +24,9 @@ class BeaconServices {
             ?.observeOn(AndroidSchedulers.mainThread())
             ?.subscribe(
                 {
-                    if (it != null) {
-                      //  var result = it.jwt
-                        Credentials.jwt = it.jwt
+                    if (it != null && it.isSuccessful) {
+                        var result = it.body()
+                        Credentials.jwt = result!!.jwt
                         getAppinfo(context,activity)
 
                     }else{
