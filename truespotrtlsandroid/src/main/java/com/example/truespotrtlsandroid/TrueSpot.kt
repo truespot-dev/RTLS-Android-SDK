@@ -8,7 +8,7 @@ import com.example.truespotrtlsandroid.models.Credentials
 class TrueSpot  {
 
      //var shared = TrueSpot()
-
+     // test
     /// Debug mode flag. Keep this off for production. Only for debugging purposes.
     var isDebugMode = false
 
