@@ -40,7 +40,7 @@ object BeaconAPI {
         val retrofit: Retrofit = Retrofit.Builder()
             .baseUrl(API.authURL)
             .client(OkHttpClient.Builder().build())
-            .addCallAdapterFactory(RxJava2CallAdapterFactory.create()).build()
+            .addCallAdapterFactory(RxJava2CallAdapterFactory.createWithScheduler(Schedulers.io())).build()
        return retrofit.create(clazz)
 
     /* Retrofit.Builder()

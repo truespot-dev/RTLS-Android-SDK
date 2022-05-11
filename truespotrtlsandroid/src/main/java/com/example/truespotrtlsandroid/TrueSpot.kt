@@ -21,7 +21,7 @@ class TrueSpot  {
     ///   - tenatId: the tenantId for your organization - will be provided for your organization
     ///   - clientSecret: client secret - will be provided for your organization
     ///   - isDebugMode: If turn on, you can see logs as you use the SDK,
-    fun  configure(context : Context, activity: Activity, tenatId: String, clientSecret: String, isDebugMode: Boolean)
+    suspend fun  configure(context : Context, activity: Activity, tenatId: String, clientSecret: String, isDebugMode: Boolean)
     {
         TrueSpot().isDebugMode = isDebugMode
         Credentials.tenantId = tenatId

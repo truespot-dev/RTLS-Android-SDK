@@ -10,7 +10,7 @@ import rx.Observable
 interface BeaconAPIServices {
 
     @POST("/${API.Endpoint.authorization}")
-    fun authenticate(@Query("tenantId") tenantId: String?): Observable<Response<Authorization?>?>
+    suspend fun authenticate(@Query("tenantId") tenantId: String?): Observable<Response<Authorization?>?>
 
     @GET("/${API.Endpoint.applications}/?self")
     fun getAppinfo(): Observable<TSApplication?>

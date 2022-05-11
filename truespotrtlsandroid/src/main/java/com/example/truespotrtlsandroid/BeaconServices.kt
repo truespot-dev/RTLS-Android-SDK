@@ -16,7 +16,7 @@ import rx.schedulers.Schedulers
 import kotlin.reflect.typeOf
 
 class BeaconServices {
-    fun authenticate(context: Context,activity: Activity)
+    suspend fun authenticate(context: Context, activity: Activity)
     {
         BeaconAPI.getBeaconApi()
             .authenticate(Credentials.tenantId)
