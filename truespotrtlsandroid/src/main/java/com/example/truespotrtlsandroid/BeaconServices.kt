@@ -75,7 +75,7 @@ class BeaconServices {
 }
 object API{
     //DEV
-    val authURL = "https://authprovider-d-us-c-api.azurewebsites.net/"
+    val authURL = "https://authprovider-d-us-c-api.azurewebsites.net"
 
     //PROD
     // val authURL = "https://auth.truespot.com/"
