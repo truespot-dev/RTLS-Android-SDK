@@ -34,15 +34,14 @@ object BeaconAPI {
                 chain.proceed(request)
             }.build()
 
-        val rxAdapter: RxJava2CallAdapterFactory = RxJava2CallAdapterFactory.createAsync()
 
-        val retrofit : Retrofit = Retrofit.Builder()
+       return  Retrofit.Builder()
             .baseUrl(API.authURL)
             .client(okHttpClient)
+            .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
             .addConverterFactory(GsonConverterFactory.create(GSON))
-            .addCallAdapterFactory(rxAdapter)
-            .build()
-        return retrofit.create(clazz)
+            .build().create(clazz)
+
 
     }
 
