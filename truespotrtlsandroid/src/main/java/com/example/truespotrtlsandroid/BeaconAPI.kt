@@ -23,11 +23,11 @@ object BeaconAPI {
 
     private fun <T> getApi(clazz: Class<T>): T {
         lateinit var retrofit: Retrofit
-
+        var autho = "Basic ${Credentials.clientSecret}"
 
         val headersInterceptor = Interceptor { chain ->
             val requestBuilder = chain.request().newBuilder()
-            requestBuilder.header("Authorization", "Bearer ${Credentials.clientSecret}")
+            requestBuilder.header("Authorization", "Basic ${Credentials.clientSecret}")
             chain.proceed(requestBuilder.build())
         }
 
@@ -39,10 +39,9 @@ object BeaconAPI {
             .build()
 
         retrofit = Retrofit.Builder()
-            .baseUrl(API.authURL)
+            .baseUrl(API.authURL).client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create())
             .addCallAdapterFactory(RxJava3CallAdapterFactory.create())
-            .client(okHttpClient)
             .build()
 
         return retrofit.create(clazz)
