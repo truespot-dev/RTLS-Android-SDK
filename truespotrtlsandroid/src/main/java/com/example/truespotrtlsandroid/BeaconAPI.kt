@@ -28,7 +28,7 @@ object BeaconAPI {
 
                 val requestBuilder = original.newBuilder()
                     .addHeader("Authorization", "Basic " + Credentials.clientSecret)
-                    .method(original.method(), original.body())
+                    .method(original.method, original.body)
 
                 val request = requestBuilder.build()
                 chain.proceed(request)
@@ -39,7 +39,7 @@ object BeaconAPI {
 
         val retrofit: Retrofit = Retrofit.Builder()
             .baseUrl(API.authURL)
-            .client(OkHttpClient.Builder().build())
+            .client(okHttpClient)
             .addCallAdapterFactory(RxJava2CallAdapterFactory.createWithScheduler(Schedulers.io())).build()
        return retrofit.create(clazz)
 
