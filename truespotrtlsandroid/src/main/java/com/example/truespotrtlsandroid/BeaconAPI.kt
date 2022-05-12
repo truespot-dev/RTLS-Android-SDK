@@ -3,10 +3,10 @@ package com.example.truespotrtlsandroid
 import com.example.truespotrtlsandroid.models.Credentials
 import com.fasterxml.jackson.databind.util.ISO8601Utils
 import com.google.gson.*
-import io.reactivex.schedulers.Schedulers
+import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
-import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
+import retrofit2.adapter.rxjava3.RxJava3CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 import java.text.DateFormat
 import java.text.ParseException
@@ -22,47 +22,47 @@ object BeaconAPI {
     }
 
     private fun <T> getApi(clazz: Class<T>): T {
-        val okHttpClient = OkHttpClient.Builder()
-            .addInterceptor { chain ->
-                val original = chain.request()
-
-                val requestBuilder = original.newBuilder()
-                    .addHeader("Authorization", "Basic " + Credentials.clientSecret)
-                    .method(original.method, original.body)
-
-                val request = requestBuilder.build()
-                chain.proceed(request)
-            }.build()
+        lateinit var retrofit: Retrofit
 
 
+        val headersInterceptor = Interceptor { chain ->
+            val requestBuilder = chain.request().newBuilder()
+            requestBuilder.header("Authorization", "Bearer ${Credentials.clientSecret}")
+            chain.proceed(requestBuilder.build())
+        }
 
 
-        val retrofit: Retrofit = Retrofit.Builder()
+        val okHttpClient = OkHttpClient()
+            .newBuilder()
+            .followRedirects(true)
+            .addInterceptor(headersInterceptor)
+            .build()
+
+        retrofit = Retrofit.Builder()
             .baseUrl(API.authURL)
+            .addConverterFactory(GsonConverterFactory.create())
+            .addCallAdapterFactory(RxJava3CallAdapterFactory.create())
             .client(okHttpClient)
-            .addCallAdapterFactory(RxJava2CallAdapterFactory.createWithScheduler(Schedulers.io())).build()
-       return retrofit.create(clazz)
+            .build()
 
-    /* Retrofit.Builder()
-            .baseUrl(API.authURL)
-            .client(okHttpClient)
-            .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-            .addConverterFactory(GsonConverterFactory.create(GSON))
-            .build().create(clazz)*/
-
-
+        return retrofit.create(clazz)
     }
 
-    var DATE_FORMAT: SimpleDateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.US)
-    var GSON: Gson = GsonBuilder() /*.setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")*/
-        .registerTypeAdapter(Date::class.java, JsonSerializer<Date> { date, type, context -> if (date == null) null else JsonPrimitive(DATE_FORMAT.format(date)) } as JsonSerializer<Date?>?
+ /*   var DATE_FORMAT: SimpleDateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.US)
+    var GSON: Gson = GsonBuilder() *//*.setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")*//*
+        .registerTypeAdapter(
+            Date::class.java,
+            JsonSerializer<Date> { date, type, context ->
+                if (date == null) null else JsonPrimitive(DATE_FORMAT.format(date))
+            } as JsonSerializer<Date?>?
         )
         .registerTypeAdapter(Date::class.java, label@ JsonDeserializer { json, type, context ->
             // https://github.com/google/gson/blob/master/gson/src/main/java/com/google/gson/DefaultDateTypeAdapter.java
             try {
                 return@JsonDeserializer DateFormat.getDateTimeInstance(
                     DateFormat.DEFAULT,
-                    DateFormat.DEFAULT, Locale.US).parse(json.getAsString())
+                    DateFormat.DEFAULT, Locale.US
+                ).parse(json.getAsString())
             } catch (ignored: ParseException) {
             }
             try {
@@ -72,6 +72,6 @@ object BeaconAPI {
             null
         } as JsonDeserializer?)
         .setLenient()
-        .create()
+        .create()*/
 
 }
