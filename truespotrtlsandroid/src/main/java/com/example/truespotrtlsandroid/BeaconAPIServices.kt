@@ -11,8 +11,8 @@ import rx.Single
 
 interface BeaconAPIServices {
 
-    @POST("api/api-authorizations")
-    fun authenticate(@Query("tenantId") tenantId: String?): Single<Response<Authen>>
+    @POST("/api/api-authorizations")
+    suspend fun authenticate(@Query("tenantId") tenantId: String): Authen
 
     @GET("/${API.Endpoint.applications}/?self")
     fun getAppinfo(): Observable<TSApplication?>

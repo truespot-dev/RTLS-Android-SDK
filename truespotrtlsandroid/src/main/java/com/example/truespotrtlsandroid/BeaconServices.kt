@@ -1,24 +1,53 @@
 package com.example.truespotrtlsandroid
 
 import android.app.Activity
-import android.app.Application
 import android.content.Context
-import android.provider.Settings.Global.getString
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
-import com.example.truespotrtlsandroid.models.Authorization
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelStoreOwner
+import androidx.lifecycle.observe
 import com.example.truespotrtlsandroid.models.Credentials
-import okhttp3.OkHttpClient
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
-import kotlin.reflect.typeOf
+
 
 object BeaconServices {
-    fun authenticate(context: Context, activity: Activity)
+
+    fun authenticate(viewModelStoreOwner: ViewModelStoreOwner,viewLifecycleOwner : LifecycleOwner,context: Context, activity: Activity)
     {
-        BeaconAPI.getBeaconApi()
+       var beaconServiceViewModel : BeaconServiceViewModel =
+
+           ViewModelProvider(viewModelStoreOwner,BeaconServiceViewModelFactory(activity.application, ApiHelper(RetrofitBuilder.apiService)))
+           .get(BeaconServiceViewModel::class.java)
+
+        beaconServiceViewModel?.authenticate(Credentials.tenantId).observe(viewLifecycleOwner)
+        {
+            when (it.status)
+            {
+                Status.SUCCESS ->
+                {
+                    var result = it.data
+
+                }
+                Status.LOADING -> {}
+                Status.ERROR ->{
+                    AlertDialog.Builder(context)
+                        .setTitle(R.string.error)
+                        .setMessage(it.message)
+                        .setPositiveButton("OK",null).show()
+                }
+            }
+        }
+
+
+
+
+
+
+
+       /* BeaconAPI.getBeaconApi()
             .authenticate(Credentials.tenantId)
             ?.subscribeOn(Schedulers.io())
             ?.observeOn(AndroidSchedulers.mainThread())
@@ -39,7 +68,7 @@ object BeaconServices {
             ) { error: Throwable ->
 
                 Toast.makeText(context, R.string.update_failure, Toast.LENGTH_SHORT).show()
-            }
+            }*/
     }
 
     fun getAppinfo(context: Context,activity: Activity)
