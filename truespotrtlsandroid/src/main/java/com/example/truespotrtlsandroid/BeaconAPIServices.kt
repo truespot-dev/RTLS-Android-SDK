@@ -1,5 +1,6 @@
 package com.example.truespotrtlsandroid
 
+import com.example.truespotrtlsandroid.models.Authen
 import com.example.truespotrtlsandroid.models.Authorization
 import com.example.truespotrtlsandroid.models.TSApplication
 import retrofit2.Response
@@ -10,7 +11,7 @@ import rx.Observable
 interface BeaconAPIServices {
 
     @POST("/${API.Endpoint.authorization}")
-    fun authenticate(@Query("tenantId") tenantId: String?): Observable<Response<Authorization?>?>
+    fun authenticate(@Query("tenantId") tenantId: String?): Observable<Response<Authen?>?>
 
     @GET("/${API.Endpoint.applications}/?self")
     fun getAppinfo(): Observable<TSApplication?>
