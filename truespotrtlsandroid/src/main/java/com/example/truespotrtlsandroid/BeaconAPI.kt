@@ -23,7 +23,6 @@ object BeaconAPI {
 
     private fun <T> getApi(clazz: Class<T>): T {
         lateinit var retrofit: Retrofit
-        var autho = "Basic ${Credentials.clientSecret}"
 
         val headersInterceptor = Interceptor { chain ->
             val requestBuilder = chain.request().newBuilder()
@@ -39,16 +38,17 @@ object BeaconAPI {
             .build()
 
         retrofit = Retrofit.Builder()
-            .baseUrl(API.authURL).client(okHttpClient)
-            .addConverterFactory(GsonConverterFactory.create())
+            .baseUrl(API.authURL)
+            .client(okHttpClient)
+            .addConverterFactory(GsonConverterFactory.create(GSON))
             .addCallAdapterFactory(RxJava3CallAdapterFactory.create())
             .build()
 
         return retrofit.create(clazz)
     }
 
- /*   var DATE_FORMAT: SimpleDateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.US)
-    var GSON: Gson = GsonBuilder() *//*.setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")*//*
+    var DATE_FORMAT: SimpleDateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.US)
+    var GSON: Gson = GsonBuilder() .setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
         .registerTypeAdapter(
             Date::class.java,
             JsonSerializer<Date> { date, type, context ->
@@ -71,6 +71,6 @@ object BeaconAPI {
             null
         } as JsonDeserializer?)
         .setLenient()
-        .create()*/
+        .create()
 
 }
