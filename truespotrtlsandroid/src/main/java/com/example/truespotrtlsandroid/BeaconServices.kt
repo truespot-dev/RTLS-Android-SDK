@@ -17,22 +17,47 @@ object BeaconServices {
 
     fun authenticate(viewModelStoreOwner: ViewModelStoreOwner,viewLifecycleOwner : LifecycleOwner,context: Context, activity: Activity)
     {
-       var beaconServiceViewModel : BeaconServiceViewModel =
-
-           ViewModelProvider(viewModelStoreOwner,BeaconServiceViewModelFactory(activity.application, ApiHelper(RetrofitBuilder.apiService)))
+        var beaconServiceViewModel : BeaconServiceViewModel  = ViewModelProvider(viewModelStoreOwner,BeaconServiceViewModelFactory(activity.application, ApiHelper(RetrofitBuilder.apiAuthService)))
            .get(BeaconServiceViewModel::class.java)
 
-        beaconServiceViewModel?.authenticate(Credentials.tenantId).observe(viewLifecycleOwner)
+        beaconServiceViewModel.authenticate(Credentials.tenantId).observe(viewLifecycleOwner)
         {
             when (it.status)
             {
-                Status.SUCCESS ->
-                {
+                Status.SUCCESS ->{
                     var result = it.data
-
+                    Credentials.jwt = result!!.jwt
+                    getAppinfo(viewModelStoreOwner,viewLifecycleOwner,context,activity)
                 }
                 Status.LOADING -> {}
                 Status.ERROR ->{
+                    AlertDialog.Builder(context)
+                        .setTitle(R.string.error)
+                        .setMessage(it.message)
+                        .setPositiveButton("OK",null).show()
+                }
+            }
+        }
+    }
+
+    fun getAppinfo(viewModelStoreOwner: ViewModelStoreOwner,viewLifecycleOwner : LifecycleOwner,context: Context,activity: Activity)
+    {
+        var beaconServiceViewModel : BeaconServiceViewModel  = ViewModelProvider(viewModelStoreOwner,BeaconServiceViewModelFactory(activity.application, ApiHelper(RetrofitBuilder.apiBaseService)))
+            .get(BeaconServiceViewModel::class.java)
+
+
+        beaconServiceViewModel.getAppinfo().observe(viewLifecycleOwner){
+            when(it.status)
+            {
+                Status.SUCCESS ->{
+                    var result = it.data
+                    Credentials.appInfo = result
+                    TSLocationManager(context,activity).startScanning()
+                }
+                Status.LOADING->{
+                }
+                Status.ERROR ->
+                {
                     AlertDialog.Builder(context)
                         .setTitle(R.string.error)
                         .setMessage(it.message)
@@ -44,36 +69,7 @@ object BeaconServices {
 
 
 
-
-
-
        /* BeaconAPI.getBeaconApi()
-            .authenticate(Credentials.tenantId)
-            ?.subscribeOn(Schedulers.io())
-            ?.observeOn(AndroidSchedulers.mainThread())
-            ?.subscribe(
-                {
-                    if (it != null && it.isSuccessful) {
-                        var result = it.body()
-                        Credentials.jwt = result!!.jwt
-                        getAppinfo(context,activity)
-
-                    }else{
-                        AlertDialog.Builder(context)
-                            .setTitle(R.string.error)
-                            .setMessage(R.string.error_msg)
-                            .setPositiveButton("OK",null).show()
-                    }
-                }
-            ) { error: Throwable ->
-
-                Toast.makeText(context, R.string.update_failure, Toast.LENGTH_SHORT).show()
-            }*/
-    }
-
-    fun getAppinfo(context: Context,activity: Activity)
-    {
-        BeaconAPI.getBeaconApi()
             .getAppinfo()
             ?.subscribeOn(Schedulers.io())
             ?.observeOn(AndroidSchedulers.mainThread())
@@ -94,7 +90,7 @@ object BeaconServices {
             { error: Throwable ->
 
                 Toast.makeText(context, R.string.update_failure, Toast.LENGTH_SHORT).show()
-            }
+            }*/
 
     }
 

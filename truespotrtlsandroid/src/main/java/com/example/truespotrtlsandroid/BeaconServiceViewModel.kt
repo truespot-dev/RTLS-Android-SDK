@@ -20,4 +20,16 @@ class BeaconServiceViewModel(application: Application, private val mainRepositor
     }
 
 
+    fun getAppinfo() = liveData(Dispatchers.IO){
+        emit(Resource.loading(data = null))
+        try
+        {
+            val result = mainRepository.getAppinfo()
+            emit(Resource.success(result))
+        }catch (exception : Exception)
+        {
+            emit(Resource.error(data = null, message = exception.message ?: "Error"))
+        }
+    }
+
 }
