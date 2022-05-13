@@ -17,7 +17,7 @@ object BeaconServices {
 
     fun authenticate(viewModelStoreOwner: ViewModelStoreOwner,viewLifecycleOwner : LifecycleOwner,context: Context, activity: Activity)
     {
-        var beaconServiceViewModel : BeaconServiceViewModel  = ViewModelProvider(viewModelStoreOwner,BeaconServiceViewModelFactory(activity.application, ApiHelper(RetrofitBuilder.apiAuthService)))
+        val beaconServiceViewModel : BeaconServiceViewModel  = ViewModelProvider(viewModelStoreOwner,BeaconServiceViewModelFactory(activity.application, ApiHelper(RetrofitBuilder.apiAuthService)))
            .get(BeaconServiceViewModel::class.java)
 
         beaconServiceViewModel.authenticate(Credentials.tenantId).observe(viewLifecycleOwner)
@@ -25,9 +25,20 @@ object BeaconServices {
             when (it.status)
             {
                 Status.SUCCESS ->{
-                    var result = it.data
-                    Credentials.jwt = result!!.jwt
-                    getAppinfo(viewModelStoreOwner,viewLifecycleOwner,context,activity)
+                    if(it.data != null)
+                    {
+                        val result = it.data
+                        Credentials.jwt = result.jwt
+                        getAppinfo(viewModelStoreOwner,viewLifecycleOwner,context,activity)
+                    }
+                    else
+                    {
+                        AlertDialog.Builder(context)
+                            .setTitle(R.string.error)
+                            .setMessage(it.message)
+                            .setPositiveButton("OK",null).show()
+                    }
+
                 }
                 Status.LOADING -> {}
                 Status.ERROR ->{
@@ -42,7 +53,7 @@ object BeaconServices {
 
     fun getAppinfo(viewModelStoreOwner: ViewModelStoreOwner,viewLifecycleOwner : LifecycleOwner,context: Context,activity: Activity)
     {
-        var beaconServiceViewModel : BeaconServiceViewModel  = ViewModelProvider(viewModelStoreOwner,BeaconServiceViewModelFactory(activity.application, ApiHelper(RetrofitBuilder.apiBaseService)))
+        val beaconServiceViewModel : BeaconServiceViewModel  = ViewModelProvider(viewModelStoreOwner,BeaconServiceViewModelFactory(activity.application, ApiHelper(RetrofitBuilder.apiBaseService)))
             .get(BeaconServiceViewModel::class.java)
 
 
@@ -50,9 +61,20 @@ object BeaconServices {
             when(it.status)
             {
                 Status.SUCCESS ->{
-                    var result = it.data
-                    Credentials.appInfo = result
-                    TSLocationManager(context,activity).startScanning()
+                    if(it.data != null)
+                    {
+                        val result = it.data
+                        Credentials.appInfo = result
+                        TSLocationManager(context,activity).startScanning()
+                    }
+                    else
+                    {
+                        AlertDialog.Builder(context)
+                            .setTitle(R.string.error)
+                            .setMessage(it.message)
+                            .setPositiveButton("OK",null).show()
+                    }
+
                 }
                 Status.LOADING->{
                 }
@@ -106,7 +128,7 @@ object API{
     // val authURL = "https://auth.truespot.com/"
 
     //DEV
-    val RTLSBaseURL = "https://rtls-d-us-c-api.azurewebsites.net/"
+    val RTLSBaseURL = "https://rtls-d-us-c-api.azurewebsites.net"
 
     //PROD
     //val RTLSBaseURL = "https://rtls.truespot.com/"
