@@ -18,8 +18,7 @@ object BeaconServices {
     var beaconServiceViewModel : BeaconServiceViewModel? = null
     fun authenticate(viewModelStoreOwner: ViewModelStoreOwner,viewLifecycleOwner : LifecycleOwner,context: Context, activity: Activity)
     {
-         RetrofitBuilder.statusPassURL = true
-         beaconServiceViewModel = ViewModelProvider(viewModelStoreOwner,BeaconServiceViewModelFactory(activity.application, ApiHelper(RetrofitBuilder.apiAuthService)))
+         beaconServiceViewModel = ViewModelProvider(viewModelStoreOwner,BeaconServiceViewModelFactory(activity.application, ApiHelper(RetrofitBuilder.getAuthURLRetrofit(true))))
            .get(BeaconServiceViewModel::class.java)
 
         beaconServiceViewModel!!.authenticate(Credentials.tenantId).observe(viewLifecycleOwner)
@@ -55,7 +54,7 @@ object BeaconServices {
 
     fun getAppinfo(viewModelStoreOwner: ViewModelStoreOwner,viewLifecycleOwner : LifecycleOwner,context: Context,activity: Activity)
     {
-        beaconServiceViewModel  = ViewModelProvider(viewModelStoreOwner,BeaconServiceViewModelFactory(activity.application, ApiHelper(BaseRetrofitBuilder.apiBaseService)))
+        beaconServiceViewModel  = ViewModelProvider(viewModelStoreOwner,BeaconServiceViewModelFactory(activity.application, ApiHelper(RetrofitBuilder.getAuthURLRetrofit(false))))
             .get(BeaconServiceViewModel::class.java)
 
 
