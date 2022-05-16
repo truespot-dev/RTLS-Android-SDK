@@ -53,7 +53,7 @@ object BeaconServices {
 
     fun getAppinfo(viewModelStoreOwner: ViewModelStoreOwner,viewLifecycleOwner : LifecycleOwner,context: Context,activity: Activity)
     {
-        val beaconServiceViewModel : BeaconServiceViewModel  = ViewModelProvider(viewModelStoreOwner,BeaconServiceViewModelFactory(activity.application, ApiHelper(RetrofitBuilder.apiBaseService)))
+        val beaconServiceViewModel : BeaconServiceViewModel  = ViewModelProvider(viewModelStoreOwner,BeaconServiceViewModelFactory(activity.application, ApiHelper(BaseRetrofitBuilder.apiBaseService)))
             .get(BeaconServiceViewModel::class.java)
 
 
