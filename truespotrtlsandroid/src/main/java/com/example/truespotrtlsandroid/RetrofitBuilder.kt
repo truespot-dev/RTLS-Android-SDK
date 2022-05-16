@@ -29,6 +29,8 @@ object RetrofitBuilder {
             .build() //Doesn't require the adapter
     }
 
+    val apiAuthService: BeaconAPIServices = getAuthURLRetrofit().create(BeaconAPIServices::class.java)
+
     private fun getBaseURLRetrofit(): Retrofit {
         val headersInterceptor = Interceptor { chain ->
             val requestBuilder = chain.request().newBuilder()
@@ -49,6 +51,5 @@ object RetrofitBuilder {
             .build() //Doesn't require the adapter
     }
 
-    val apiAuthService: BeaconAPIServices = getAuthURLRetrofit().create(BeaconAPIServices::class.java)
     val apiBaseService: BeaconAPIServices = getBaseURLRetrofit().create(BeaconAPIServices::class.java)
 }
