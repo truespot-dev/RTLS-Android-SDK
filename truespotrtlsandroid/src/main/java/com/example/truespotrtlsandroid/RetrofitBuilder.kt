@@ -13,7 +13,8 @@ object RetrofitBuilder {
     fun getAuthURLRetrofit(statusPassURL : Boolean?): BeaconAPIServices {
         val headersInterceptor = Interceptor { chain ->
             val requestBuilder = chain.request().newBuilder()
-            requestBuilder.header("Authorization", "Basic ${Credentials.clientSecret}")
+            val authorization : String = if(statusPassURL!!) "Basic ${Credentials.clientSecret}" else "Bearer ${Credentials.jwt}"
+            requestBuilder.header("Authorization", authorization)
             chain.proceed(requestBuilder.build())
         }
         val okHttpClient = OkHttpClient()
