@@ -9,7 +9,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.jackson.JacksonConverterFactory
 
 object RetrofitBuilder {
-    var retrofit : Retrofit? = null
+
     private fun getAuthURLRetrofit(): Retrofit {
         val headersInterceptor = Interceptor { chain ->
             val requestBuilder = chain.request().newBuilder()
@@ -23,26 +23,13 @@ object RetrofitBuilder {
             .build()
 
 
-        if(retrofit == null)
-        {
-            retrofit = Retrofit.Builder()
+
+       return Retrofit.Builder()
                 .baseUrl(API.authURL)
                 .client(okHttpClient)
                 .addConverterFactory(JacksonConverterFactory.create())
                 .build() //Doesn't require the adapter
-        }
-        else
-        {
-            if(!retrofit!!.baseUrl().equals(API.RTLSBaseURL))
-            {
-                retrofit = Retrofit.Builder()
-                    .baseUrl(API.authURL)
-                    .client(okHttpClient)
-                    .addConverterFactory(JacksonConverterFactory.create())
-                    .build() //Doesn't require the adapter
-            }
-        }
-       return  retrofit!!
+
     }
 
     val apiAuthService: BeaconAPIServices = getAuthURLRetrofit().create(BeaconAPIServices::class.java)
