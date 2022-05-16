@@ -10,6 +10,8 @@ import retrofit2.converter.jackson.JacksonConverterFactory
 
 object RetrofitBuilder {
 
+    var statusPassURL : Boolean? = false
+
     private fun getAuthURLRetrofit(): Retrofit {
         val headersInterceptor = Interceptor { chain ->
             val requestBuilder = chain.request().newBuilder()
@@ -23,9 +25,9 @@ object RetrofitBuilder {
             .build()
 
 
-
+        val passingURL : String = if (statusPassURL!!) API.authURL else API.RTLSBaseURL
        return Retrofit.Builder()
-                .baseUrl(API.authURL)
+                .baseUrl(passingURL)
                 .client(okHttpClient)
                 .addConverterFactory(JacksonConverterFactory.create())
                 .build() //Doesn't require the adapter

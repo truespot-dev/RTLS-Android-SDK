@@ -18,6 +18,7 @@ object BeaconServices {
     var beaconServiceViewModel : BeaconServiceViewModel? = null
     fun authenticate(viewModelStoreOwner: ViewModelStoreOwner,viewLifecycleOwner : LifecycleOwner,context: Context, activity: Activity)
     {
+         RetrofitBuilder.statusPassURL = true
          beaconServiceViewModel = ViewModelProvider(viewModelStoreOwner,BeaconServiceViewModelFactory(activity.application, ApiHelper(RetrofitBuilder.apiAuthService)))
            .get(BeaconServiceViewModel::class.java)
 
