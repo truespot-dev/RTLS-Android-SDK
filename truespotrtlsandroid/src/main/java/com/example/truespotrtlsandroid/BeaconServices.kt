@@ -15,13 +15,13 @@ import rx.schedulers.Schedulers
 
 object BeaconServices {
 
-    var beaconServiceViewModel : BeaconServiceViewModel? = null
+
     fun authenticate(viewModelStoreOwner: ViewModelStoreOwner,viewLifecycleOwner : LifecycleOwner,context: Context, activity: Activity)
     {
-         beaconServiceViewModel = ViewModelProvider(viewModelStoreOwner,BeaconServiceViewModelFactory(activity.application, ApiHelper(RetrofitBuilder.getAuthURLRetrofit(true))))
+        val beaconServiceViewModel : BeaconServiceViewModel = ViewModelProvider(viewModelStoreOwner,BeaconServiceViewModelFactory(activity.application, ApiHelper(RetrofitBuilder.getAuthURLRetrofit(true))))
            .get(BeaconServiceViewModel::class.java)
 
-        beaconServiceViewModel!!.authenticate(Credentials.tenantId).observe(viewLifecycleOwner)
+        beaconServiceViewModel.authenticate(Credentials.tenantId).observe(viewLifecycleOwner)
         {
             when (it.status)
             {
@@ -54,11 +54,11 @@ object BeaconServices {
 
     fun getAppinfo(viewModelStoreOwner: ViewModelStoreOwner,viewLifecycleOwner : LifecycleOwner,context: Context,activity: Activity)
     {
-        beaconServiceViewModel  = ViewModelProvider(viewModelStoreOwner,BeaconServiceViewModelFactory(activity.application, ApiHelper(RetrofitBuilder.getAuthURLRetrofit(false))))
+        val beaconServiceViewModel : BeaconServiceViewModel  = ViewModelProvider(viewModelStoreOwner,BeaconServiceViewModelFactory(activity.application, ApiHelper(RetrofitBuilder.getAuthURLRetrofit(false))))
             .get(BeaconServiceViewModel::class.java)
 
 
-        beaconServiceViewModel!!.getAppinfo().observe(viewLifecycleOwner){
+        beaconServiceViewModel.getAppinfo().observe(viewLifecycleOwner){
             when(it.status)
             {
                 Status.SUCCESS ->{
