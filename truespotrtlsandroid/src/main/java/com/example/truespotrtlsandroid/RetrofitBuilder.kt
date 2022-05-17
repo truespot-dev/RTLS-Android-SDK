@@ -10,7 +10,7 @@ import retrofit2.converter.jackson.JacksonConverterFactory
 
 object RetrofitBuilder {
 
-    fun getRetrofit(statusPassURL : Boolean?): Retrofit {
+    private fun getRetrofit(statusPassURL : Boolean?): Retrofit {
         var statusPass : Boolean? = statusPassURL
         if (statusPassURL == null) statusPass = false
         val headersInterceptor = Interceptor { chain ->
