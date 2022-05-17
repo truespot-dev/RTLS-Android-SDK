@@ -10,14 +10,10 @@ import retrofit2.converter.jackson.JacksonConverterFactory
 
 object RetrofitBuilder {
 
-    private fun getRetrofit(statusPassURL : Boolean?): Retrofit {
-        //test
-        var statusPass : Boolean? = statusPassURL
-        if (statusPassURL == null) statusPass = false
+    private fun getAuthURLRetrofit(): Retrofit {
         val headersInterceptor = Interceptor { chain ->
             val requestBuilder = chain.request().newBuilder()
-            val authorization : String = if(statusPass!!) "Basic ${Credentials.clientSecret}" else "Bearer ${Credentials.jwt}"
-            requestBuilder.header("Authorization", authorization)
+            requestBuilder.header("Authorization",  "Basic ${Credentials.clientSecret}")
             chain.proceed(requestBuilder.build())
         }
         val okHttpClient = OkHttpClient()
@@ -27,20 +23,15 @@ object RetrofitBuilder {
             .build()
 
 
-        val passingURL : String =  if (statusPass!!) API.authURL else API.RTLSBaseURL
         val retrofit2 : Retrofit = Retrofit.Builder()
-                .baseUrl(passingURL)
+                .baseUrl(API.authURL)
                 .client(okHttpClient)
                 .addConverterFactory(JacksonConverterFactory.create())
                 .build() //Doesn't require the adapter
         return retrofit2
     }
 
-    fun getRetrofitBuild(statusPassURL : Boolean?) : BeaconAPIServices
-    {
-      return  getRetrofit(statusPassURL).create(BeaconAPIServices::class.java)
-    }
-    //val apiAuthService: BeaconAPIServices = getAuthURLRetrofit().create(BeaconAPIServices::class.java)
+    val apiAuthService: BeaconAPIServices = getAuthURLRetrofit().create(BeaconAPIServices::class.java)
 
 
 }

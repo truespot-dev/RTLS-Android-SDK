@@ -18,7 +18,7 @@ object BeaconServices {
 
     fun authenticate(viewModelStoreOwner: ViewModelStoreOwner,viewLifecycleOwner : LifecycleOwner,context: Context, activity: Activity)
     {
-        val beaconServiceViewModel : BeaconServiceViewModel = ViewModelProvider(viewModelStoreOwner,BeaconServiceViewModelFactory(activity.application, ApiHelper(RetrofitBuilder.getRetrofitBuild(true))))
+        val beaconServiceViewModel : BeaconServiceViewModel = ViewModelProvider(viewModelStoreOwner,BeaconServiceViewModelFactory(activity.application, ApiHelper(RetrofitBuilder.apiAuthService)))
            .get(BeaconServiceViewModel::class.java)
 
         beaconServiceViewModel.authenticate(Credentials.tenantId).observe(viewLifecycleOwner)
@@ -54,11 +54,11 @@ object BeaconServices {
 
     fun getAppinfo(viewModelStoreOwner: ViewModelStoreOwner,viewLifecycleOwner : LifecycleOwner,context: Context,activity: Activity)
     {
-        val beaconServiceViewModel : BeaconServiceViewModel  = ViewModelProvider(viewModelStoreOwner,BeaconServiceViewModelFactory(activity.application, ApiHelper(RetrofitBuilder.getRetrofitBuild(null))))
-            .get(BeaconServiceViewModel::class.java)
+        val beaconBaseServiceViewModel : BeaconBaseServiceViewModel  = ViewModelProvider(viewModelStoreOwner,BeaconBaseServiceViewModelFactory(activity.application, BaseApiHelper(BaseRetrofitBuilder.apiBaseService)))
+            .get(BeaconBaseServiceViewModel::class.java)
 
 
-        beaconServiceViewModel.getAppinfo().observe(viewLifecycleOwner){
+        beaconBaseServiceViewModel.getAppinfo().observe(viewLifecycleOwner){
             when(it.status)
             {
                 Status.SUCCESS ->{

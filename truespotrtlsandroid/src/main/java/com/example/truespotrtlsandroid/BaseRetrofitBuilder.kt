@@ -27,5 +27,5 @@ object BaseRetrofitBuilder {
             .build() //Doesn't require the adapter
     }
 
-    val apiBaseService: BeaconAPIServices = getBaseURLRetrofit().create(BeaconAPIServices::class.java)
+    val apiBaseService: BeaconBaseAPIServices = getBaseURLRetrofit().create(BeaconBaseAPIServices::class.java)
 }
