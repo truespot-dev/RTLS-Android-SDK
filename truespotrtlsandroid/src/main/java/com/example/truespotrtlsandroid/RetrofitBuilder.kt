@@ -10,7 +10,7 @@ import retrofit2.converter.jackson.JacksonConverterFactory
 
 object RetrofitBuilder {
 
-    fun getAuthURLRetrofit(statusPassURL : Boolean?): Retrofit {
+    fun getRetrofit(statusPassURL : Boolean?): Retrofit {
         var statusPass : Boolean? = statusPassURL
         if (statusPassURL == null) statusPass = false
         val headersInterceptor = Interceptor { chain ->
@@ -37,7 +37,7 @@ object RetrofitBuilder {
 
     fun getRetrofitBuild(statusPassURL : Boolean?) : BeaconAPIServices
     {
-      return  getAuthURLRetrofit(statusPassURL).create(BeaconAPIServices::class.java)
+      return  getRetrofit(statusPassURL).create(BeaconAPIServices::class.java)
     }
     //val apiAuthService: BeaconAPIServices = getAuthURLRetrofit().create(BeaconAPIServices::class.java)
 
