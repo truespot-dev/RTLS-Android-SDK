@@ -19,4 +19,18 @@ class BeaconBaseServiceViewModel(application: Application, private val mainBaseR
             emit(Resource.error(data = null, message = exception.message ?: "Error"))
         }
     }
+
+    fun getTrackingDevices() = liveData(Dispatchers.IO){
+        emit(Resource.loading(data = null))
+        try
+        {
+            val result = mainBaseRepository.getTrackingDevices()
+            emit(Resource.success(result))
+        }catch (exception : Exception)
+        {
+            emit(Resource.error(data = null, message = exception.message ?: "Error"))
+        }
+    }
+
+
 }

@@ -2,8 +2,10 @@ package com.example.truespotrtlsandroid
 
 import android.Manifest
 import android.app.Activity
+import android.app.Application
 import android.content.Context
 import android.content.pm.PackageManager
+import android.graphics.Region
 import android.location.Location
 import android.location.LocationManager
 import android.os.Build
@@ -15,9 +17,18 @@ import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.getSystemService
+import com.example.truespotrtlsandroid.beacon.TSBeaconManager
+import com.example.truespotrtlsandroid.models.BeaconList.getInstance
+import com.example.truespotrtlsandroid.models.BeaconRegion
+import com.example.truespotrtlsandroid.models.Credentials
+import com.example.truespotrtlsandroid.models.IBeacon
 import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.gms.location.LocationServices
 import timber.log.Timber
+import java.util.*
+import kotlin.collections.ArrayList
+
+
 
 
 class TSLocationManager(context : Context, activity: Activity) {
@@ -29,17 +40,36 @@ class TSLocationManager(context : Context, activity: Activity) {
     var currentLocation: Location? = null
     private val handlerLocation: Handler? = null
     protected var googleApiClient: GoogleApiClient? = null
+    private var beaconRangeNotificationName = "beaconRange"
+    val beaconUUID: String = "5C38DBDE-567C-4CCA-B1DA-40A8AD465656"
+    val beaconUUIDs = arrayOf("5C38DBDE-567C-4CCA-B1DA-40A8AD465656")
+
+
+    val beaconRegion: ArrayList<BeaconRegion>? = null
 
 
     init {
 
         requestLocationPermission()
         Toast.makeText(mContext,"Location-->init", Toast.LENGTH_LONG).show()
+        val uuids = Credentials.appInfo.uuids.toCollection(ArrayList())
+        if(uuids.isNotEmpty())
+        {
+            for (uuid in uuids) {
+                beaconRegion!!.add(BeaconRegion(TSLocationManager(context,activity).beaconUUID,"ranged beacons ${uuids.indexOf(uuid)}"))
+            }
+        }
+        else
+        {
+            beaconRegion!!.add(BeaconRegion("5C38DBDE-567C-4CCA-B1DA-40A8AD465656","ranged beacons ${0}"))
+        }
+
+
 
     }
 
 
-    fun requestLocationPermission()
+    private fun requestLocationPermission()
     {
         if(isLocationServiceEnabled(mContext))
         {
@@ -52,21 +82,19 @@ class TSLocationManager(context : Context, activity: Activity) {
     fun startScanning()
     {
         updateLocation(true)
-
-        if(isLocationServiceEnabled(mContext))
+        for(region in beaconRegion!!)
         {
-            Toast.makeText(mContext,"Location-->True", Toast.LENGTH_LONG).show()
-        }
-        else
-        {
-            Toast.makeText(mContext,"Location-->false", Toast.LENGTH_LONG).show()
+            startMonitoring(region)
         }
     }
 
     fun  stopScanning()
     {
         updateLocation(false)
-
+        for(region in beaconRegion!!)
+        {
+            stopMonitoring(region)
+        }
     }
 
 
@@ -89,6 +117,17 @@ class TSLocationManager(context : Context, activity: Activity) {
             Timber.i("=====Location Manager Stop Updating======")
             cLocationManager!!.stopLocationUpdates()
         }
+
+    }
+
+
+    private fun startMonitoring(beaconRegion: BeaconRegion)
+    {
+
+    }
+
+    private fun stopMonitoring(beaconRegion: BeaconRegion)
+    {
 
     }
 
