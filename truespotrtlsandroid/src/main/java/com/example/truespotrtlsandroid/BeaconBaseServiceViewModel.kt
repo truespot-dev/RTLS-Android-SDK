@@ -32,5 +32,17 @@ class BeaconBaseServiceViewModel(application: Application, private val mainBaseR
         }
     }
 
+    fun pair(tagId: String) = liveData(Dispatchers.IO){
+        emit(Resource.loading(data = null))
+        try
+        {
+            val result = mainBaseRepository.pair(tagId)
+            emit(Resource.success(result))
+        }catch (exception : Exception)
+        {
+            emit(Resource.error(data = null, message = exception.message ?: "Error"))
+        }
+    }
+
 
 }

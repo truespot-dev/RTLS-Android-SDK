@@ -1,27 +1,20 @@
 package com.example.truespotrtlsandroid
 
-import android.Manifest
 import android.app.Activity
-import android.app.Application
 import android.content.Context
-import android.content.pm.PackageManager
-import android.graphics.Region
 import android.location.Location
 import android.location.LocationManager
 import android.os.Build
 import android.os.Handler
 import android.provider.Settings
-import android.util.Log
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.getSystemService
-import com.example.truespotrtlsandroid.beacon.TSBeaconManager
-import com.example.truespotrtlsandroid.models.BeaconList.getInstance
-import com.example.truespotrtlsandroid.models.BeaconRegion
+import com.example.truespotrtlsandroid.beacon.BeaconManager
+import com.example.truespotrtlsandroid.beacon.BeaconRegion
 import com.example.truespotrtlsandroid.models.Credentials
-import com.example.truespotrtlsandroid.models.IBeacon
 import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.gms.location.LocationServices
 import timber.log.Timber
@@ -44,8 +37,9 @@ class TSLocationManager(context : Context, activity: Activity) {
     val beaconUUID: String = "5C38DBDE-567C-4CCA-B1DA-40A8AD465656"
     val beaconUUIDs = arrayOf("5C38DBDE-567C-4CCA-B1DA-40A8AD465656")
 
-
     val beaconRegion: ArrayList<BeaconRegion>? = null
+
+    var beaconManager : BeaconManager? = null
 
 
     init {
@@ -56,16 +50,15 @@ class TSLocationManager(context : Context, activity: Activity) {
         if(uuids.isNotEmpty())
         {
             for (uuid in uuids) {
-                beaconRegion!!.add(BeaconRegion(TSLocationManager(context,activity).beaconUUID,"ranged beacons ${uuids.indexOf(uuid)}"))
+                beaconRegion!!.add(BeaconRegion("ranged beacons ${uuids.indexOf(uuid)}",TSLocationManager(context,activity).beaconUUID as UUID,0,0))
             }
         }
         else
         {
-            beaconRegion!!.add(BeaconRegion("5C38DBDE-567C-4CCA-B1DA-40A8AD465656","ranged beacons ${0}"))
+            beaconRegion!!.add(BeaconRegion("ranged beacons ${0}","5C38DBDE-567C-4CCA-B1DA-40A8AD465656" as UUID,0,0))
         }
 
-
-
+        beaconManager = BeaconManager(context)
     }
 
 
@@ -76,7 +69,7 @@ class TSLocationManager(context : Context, activity: Activity) {
             cLocationManager = CLLocationManager(mContext,mActivity)
             cLocationManager!!.startLocationUpdates()
         }
-
+        startScanning()
     }
 
     fun startScanning()
@@ -124,11 +117,15 @@ class TSLocationManager(context : Context, activity: Activity) {
     private fun startMonitoring(beaconRegion: BeaconRegion)
     {
 
+        beaconManager!!.connect {
+            BeaconManager.ServiceReadyCallback { beaconManager!!.startMonitoring(beaconRegion) }
+        }
     }
 
     private fun stopMonitoring(beaconRegion: BeaconRegion)
     {
-
+       beaconManager!!.stopMonitoring(beaconRegion.identifier)
+       beaconManager!!.disconnect()
     }
 
     private fun isLocationServiceEnabled(context: Context): Boolean {
