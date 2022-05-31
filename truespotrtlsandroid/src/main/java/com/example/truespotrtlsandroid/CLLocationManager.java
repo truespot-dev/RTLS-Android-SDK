@@ -63,6 +63,7 @@ public class CLLocationManager extends BaseLifeCycleObject {
         handler = new Handler();
         handlerLocation = new Handler();
         mLogBuilder = new StringBuilder();
+/*
 
         locationRequest = new LocationRequest();
         locationRequest.setInterval(Constant.Location.LOCATION_REQUEST_INTERVAL_MILLIS);
@@ -87,6 +88,7 @@ public class CLLocationManager extends BaseLifeCycleObject {
 //            Timber.e("Location mode is disabled");
 //        }
 
+*/
 
     }
 

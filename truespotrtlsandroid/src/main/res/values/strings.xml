@@ -3,4 +3,8 @@
     <string name="error">Error</string>
     <string name="error_msg">An unexpected error occured</string>
     <string name="update_failure">Error updating. Please retry</string>
+    <string name="key_frequency_continuous">Continuous</string>
+    <string name="key_frequency_normal">Normal</string>
+    <string name="key_frequency_battery_saver">Battery_Saver</string>
+    <string name="molocar_uuid">5C38DBDE567C4CCAB1DA40A8AD465656</string>
 </resources>

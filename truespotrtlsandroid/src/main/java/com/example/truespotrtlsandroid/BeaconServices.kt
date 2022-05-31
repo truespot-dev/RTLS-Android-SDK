@@ -17,6 +17,7 @@ import rx.schedulers.Schedulers
 
 object BeaconServices {
 
+    var locationManager : TSLocationManager? = null
 
     fun authenticate(viewModelStoreOwner: ViewModelStoreOwner,viewLifecycleOwner : LifecycleOwner,context: Context, activity: Activity,application : Application)
     {
@@ -39,7 +40,8 @@ object BeaconServices {
                         appInfo.uuids = arrayOf("5c38dbde-567c-4cca-b1da-40a8ad465656")
                         Credentials.appInfo = appInfo
 
-                        TSLocationManager(context,activity).startScanning()
+                        locationManager =  TSLocationManager(context,activity)
+                        locationManager!!.startScanning()
                        // getAppinfo(viewModelStoreOwner,viewLifecycleOwner,context,activity)
                     }
                     else
@@ -76,7 +78,8 @@ object BeaconServices {
                     {
                         val result = it.data
                         Credentials.appInfo = result
-                        TSLocationManager(context,activity).startScanning()
+                        locationManager =  TSLocationManager(context,activity)
+                        locationManager!!.startScanning()
                     }
                     else
                     {
