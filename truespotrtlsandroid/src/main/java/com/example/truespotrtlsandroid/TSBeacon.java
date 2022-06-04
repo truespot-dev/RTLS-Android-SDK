@@ -14,8 +14,8 @@ import java.util.Hashtable;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class TSBeacon extends BaseJSONModel {
 
-    @SerializedName("beaconId")
-    public String beaconId;
+    @SerializedName("uuid")
+    public String uuid;
     @SerializedName("name")
     public String name;
     @SerializedName("description")
@@ -53,9 +53,9 @@ public class TSBeacon extends BaseJSONModel {
         lat = currentLocation.coordinate.longitude !=null ? Double.parseDouble(currentLocation.coordinate.longitude) : 0 ;
 
         RSSI = beacon.getRSSI();
-        beaconIdentifier = "";
+        beaconIdentifier = beacon.getBeaconId();
         accuracy = currentLocation.horizontalAccuracy != null ? Double.parseDouble(currentLocation.horizontalAccuracy) : 0;
-        beaconId =  beacon.getUuid().replace("-","");
+        uuid =  beacon.getUuid().replace("-","");
         major = String.valueOf(beacon.getMajor()) ;
         minor = String.valueOf(beacon.getMinor());
         timeStamp =  beacon.getTimeMillis();
@@ -73,7 +73,7 @@ public class TSBeacon extends BaseJSONModel {
         lng = device.longitude;
         //RSSI = data["rssi"] as? Int
         accuracy = device.accuracy;
-        beaconId = device.uuid;
+        uuid = device.uuid;
         major = device.major;
         minor = device.minor;
         assetIdentifier = device.assetIdentifier;
@@ -97,7 +97,7 @@ public class TSBeacon extends BaseJSONModel {
                 ", Long=" + lng +
                 ", RSSI='" + RSSI + '\'' +
                 ", Acuracy=" + accuracy +
-                ", UUID=" + beaconId +
+                ", UUID=" + uuid +
                 ", Minor=" + minor +
                 ", Major=" + major +
                 '}';

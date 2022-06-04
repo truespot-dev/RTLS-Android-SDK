@@ -47,6 +47,21 @@ public class TSBeaconSighting  extends BaseJSONModel {
         this.id = id;
     }
 
+    public TSBeaconSighting(String beaconId,int rssi,String deviceAddress,String uuid, int minor,int major ) {
+        this.beaconId = beaconId;
+        this.rssi = rssi;
+        //this.timeMillis = other.timeMillis;
+       // this.temperature = other.temperature;
+       // this.batteryLevel = other.batteryLevel;
+        this.uuid = uuid;
+        this.minor = minor;
+        this.major = major;
+        this.deviceAddress = deviceAddress;
+        this.beaconIdentifier = beaconId;
+       // this.id = other.id;
+    }
+
+
     public TSBeaconSighting(TSBeaconSighting other) {
         this.beaconId = other.beaconId;
         this.rssi = other.rssi;

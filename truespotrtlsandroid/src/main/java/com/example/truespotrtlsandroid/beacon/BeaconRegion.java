@@ -18,7 +18,7 @@ public class BeaconRegion implements  Parcelable {
     public BeaconRegion(String identifier, UUID proximityUUID, Integer major, Integer minor) {
         this.identifier = Preconditions.checkNotNull(identifier);
        // Preconditions.checkArgument(!EstimoteBeacons.isSecureUUID(proximityUUID), "Invalid UUID (secure).");
-        this.proximityUUID = proximityUUID;
+        this.proximityUUID =  Preconditions.checkNotNull(proximityUUID);
         this.major = major;
         this.minor = minor;
     }
