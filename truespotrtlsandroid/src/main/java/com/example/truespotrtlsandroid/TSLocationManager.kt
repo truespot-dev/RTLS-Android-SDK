@@ -40,7 +40,7 @@ class TSLocationManager(context : Context, activity: Activity) {
 
         requestLocationPermission()
         Toast.makeText(mContext,"Location-->init", Toast.LENGTH_LONG).show()
-        val uuids = Credentials.appInfo.uuids.toCollection(ArrayList())
+        /*val uuids = Credentials.appInfo.uuids.toCollection(ArrayList())
         if(uuids.isNotEmpty())
         {
             for (uuid in uuids) {
@@ -50,7 +50,7 @@ class TSLocationManager(context : Context, activity: Activity) {
         else
         {
             beaconRegion!!.add(BeaconRegion("ranged beacons ${0}","5C38DBDE-567C-4CCA-B1DA-40A8AD465656" as UUID,0,0))
-        }
+        }*/
 
         beaconManager = BeaconManagers(context,activity)
     }
@@ -77,6 +77,7 @@ class TSLocationManager(context : Context, activity: Activity) {
             startMonitoring(region)
         }*/
 
+      //  TSBeaconManagers.initializeBeaconObserver()
 
 
     }

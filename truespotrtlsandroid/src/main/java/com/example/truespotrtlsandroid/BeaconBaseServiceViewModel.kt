@@ -3,6 +3,7 @@ package com.example.truespotrtlsandroid
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.liveData
+import com.example.truespotrtlsandroid.models.PairRequestBody
 import kotlinx.coroutines.Dispatchers
 import java.lang.Exception
 
@@ -32,11 +33,11 @@ class BeaconBaseServiceViewModel(application: Application, private val mainBaseR
         }
     }
 
-    fun pair(tagId: String) = liveData(Dispatchers.IO){
+    fun pair(pairRequestBody: PairRequestBody?,tagId: String) = liveData(Dispatchers.IO){
         emit(Resource.loading(data = null))
         try
         {
-            val result = mainBaseRepository.pair(tagId)
+            val result = mainBaseRepository.pair(pairRequestBody,tagId)
             emit(Resource.success(result))
         }catch (exception : Exception)
         {

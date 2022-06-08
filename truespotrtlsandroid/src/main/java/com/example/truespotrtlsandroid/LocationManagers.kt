@@ -102,8 +102,8 @@ class LocationManagers(context: Context, activity: Activity): BaseLifeCycleObjec
     private fun checkRequiredPermission(permission: String, context: Context): Boolean? {
         return ContextCompat.checkSelfPermission(
             context,
-            permission
-        ) == PackageManager.PERMISSION_GRANTED
+            permission) == PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(context,
+        Manifest.permission.ACCESS_COARSE_LOCATION)==PackageManager.PERMISSION_GRANTED
     }
 
 

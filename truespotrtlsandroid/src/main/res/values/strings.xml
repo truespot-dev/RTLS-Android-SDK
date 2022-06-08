@@ -7,4 +7,11 @@
     <string name="key_frequency_normal">Normal</string>
     <string name="key_frequency_battery_saver">Battery_Saver</string>
     <string name="molocar_uuid">5C38DBDE567C4CCAB1DA40A8AD465656</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="near_search">We are Preparing to Enhance the Search for you</string>
+    <string name="far">Far</string>
+    <string name="near">Near</string>
+    <string name="immediate">Immediate</string>
+    <string name="alert_title_tag">Tag Not Found</string>
+    <string name="alert_title_tag_message">This tag could not be located at this time.</string>
 </resources>

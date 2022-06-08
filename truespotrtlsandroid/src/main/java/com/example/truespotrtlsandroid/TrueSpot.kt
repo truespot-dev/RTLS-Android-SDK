@@ -6,6 +6,7 @@ import android.content.Context
 import android.widget.Toast
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModelStoreOwner
+import com.example.truespotrtlsandroid.TrueSpot.startScanning
 import com.example.truespotrtlsandroid.models.Credentials
 import timber.log.Timber
 
@@ -15,7 +16,6 @@ object TrueSpot  {
      // test
     /// Debug mode flag. Keep this off for production. Only for debugging purposes.
     var isDebugMode = false
-
     init { }
 
 
@@ -41,8 +41,9 @@ object TrueSpot  {
 
 
     /// Upon initializing the SDK, the SDK will internally call start scanning. This is for the purpose scanning beacons. You can call this function counterpart stopScanning() if you no longer want to scan.
-    fun startScanning() {
-       // TSLocationManager.shared.startScanning()
+    fun startScanning(context : Context, activity: Activity) {
+
+       TSLocationManager(context , activity).startScanning()
     }
 
 
@@ -51,6 +52,10 @@ object TrueSpot  {
        // TSLocationManager.shared.stopScanning()
     }
 
+    fun getTrackingDevices(viewModelStoreOwner: ViewModelStoreOwner,viewLifecycleOwner : LifecycleOwner,context: Context,activity: Activity)
+    {
+        BeaconServices.getTrackingDevices(viewModelStoreOwner,viewLifecycleOwner,context,activity)
+    }
 
 
 

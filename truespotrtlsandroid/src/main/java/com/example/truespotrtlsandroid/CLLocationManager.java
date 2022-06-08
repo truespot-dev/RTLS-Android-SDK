@@ -90,7 +90,17 @@ public class CLLocationManager extends BaseLifeCycleObject {
 
 */
 
+        if (checkRequiredPermission(Manifest.permission.ACCESS_FINE_LOCATION))  {
+            // Permission Enable
+        }
+        else
+        {
+            ActivityCompat.requestPermissions(activity,
+                    new String[] { Manifest.permission.ACCESS_FINE_LOCATION }, 1);
+        }
+
     }
+
 
 
     public Location getLastKnownLocation() {

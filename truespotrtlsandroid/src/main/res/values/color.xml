@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="home_item_bg">#99000000</color>
+    <color name="black">#000000</color>
+    <color name="primary_blue">#384058</color>
+    <color name="far">#ec5764</color>
+    <color name="near">#4b5966</color>
+    <color name="white_">#ffffff</color>
+</resources>

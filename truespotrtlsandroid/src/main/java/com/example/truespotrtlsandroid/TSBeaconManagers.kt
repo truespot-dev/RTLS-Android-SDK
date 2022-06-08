@@ -22,6 +22,8 @@ import java.util.*
 import java.util.stream.DoubleStream.builder
 import java.util.stream.IntStream.builder
 import java.util.stream.Stream.builder
+import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
 
 object TSBeaconManagers {
     // private var beaconsObservable: NSObjectProtocol?
@@ -30,8 +32,8 @@ object TSBeaconManagers {
     private val beaconRSSIUpdate = "beaconRSSIUpdate"
     var isGettingIdentifiers = false
     private var timer: Timer? = null
-    var mBeacons: Dictionary<String, TSBeacon>? = null
-    var mTrackingDevices: Dictionary<String, TSDevice>? = null
+    var mBeacons: HashMap<String, TSBeacon> = HashMap()
+    var mTrackingDevices: HashMap<String, TSDevice> = HashMap()
     var mReceiver: BroadcastReceiver? = null
     var stringBuilder: StringBuilder? = null
 
@@ -54,78 +56,107 @@ object TSBeaconManagers {
         mCurrentLocation: Location
     ) {
         Log.e("init", "----")
-        for (beacons in beaconUpdatedList) {
-            Log.e("init--", beacons.beaconId)
-        }
-        Log.e(
-            "currentlocation-->",
-            "lat: ${mCurrentLocation.latitude},log:${mCurrentLocation.longitude}"
-        )
-        /* val currentLocation : CLLocation? = null
-        currentLocation!!.coordinate.latitude = mCurrentLocation.latitude.toString()
-        currentLocation.coordinate.longitude = mCurrentLocation.longitude.toString()
-        currentLocation.horizontalAccuracy = mCurrentLocation.accuracy.toString()*/
-        process(
-            beaconUpdatedList,
-            CLLocation(
-                Coordinate(
-                    mCurrentLocation.latitude.toString(),
-                    mCurrentLocation.longitude.toString()
-                ), mCurrentLocation.accuracy.toString()
+        if(!beaconUpdatedList.isNullOrEmpty())
+        {
+            for (beacons in beaconUpdatedList) {
+                Log.e("init--", beacons.beaconId)
+            }
+            Log.e(
+                "currentlocation-->",
+                "lat: ${mCurrentLocation.latitude},log:${mCurrentLocation.longitude}"
             )
-        )
+            /* val currentLocation : CLLocation? = null
+            currentLocation!!.coordinate.latitude = mCurrentLocation.latitude.toString()
+            currentLocation.coordinate.longitude = mCurrentLocation.longitude.toString()
+            currentLocation.horizontalAccuracy = mCurrentLocation.accuracy.toString()*/
+            process(
+                beaconUpdatedList,
+                CLLocation(
+                    Coordinate(
+                        mCurrentLocation.latitude.toString(),
+                        mCurrentLocation.longitude.toString()
+                    ), mCurrentLocation.accuracy.toString()
+                )
+            )
+        }
+
     }
 
 
-    fun process(beacons: List<TSBeaconSighting>, currentLocation: CLLocation?) {
+    private fun process(beacons: List<TSBeaconSighting>, currentLocation: CLLocation?) {
         for (TSBeaconSighting in beacons) {
-            var beacon = TSBeacon(TSBeaconSighting, currentLocation)
-            val key = getKey(stringBuilder!!, beacon)
-            val savedBeacon = mBeacons!![key]
-            var device = mTrackingDevices!![key]
+            val beacon = TSBeacon(TSBeaconSighting, currentLocation)
             beacon.proximity = TSBeaconSighting.proximity
-            if (key != null) {
-                if (savedBeacon != null) {
-                    var savedRSSI = savedBeacon.RSSI
-                    var rssi = beacon.RSSI
-                    var beaconIdentifier = savedBeacon.beaconIdentifier
-                    beacon.beaconIdentifier = beaconIdentifier
-                    beacon.assetType = savedBeacon.assetType
-                    beacon.assetIdentifier = savedBeacon.assetIdentifier
-                    if (rssi != null) {
-                        if (rssi >= savedRSSI) {
-                            beacon = mBeacons!![key]
-                        }
-                        if (rssi != savedRSSI) {
-
-                            /* fun onReceive(context: Context, intent: Intent) {
-
-                             }*/
-
-
-                        }
-
-
-//       NotificationCenter.default.post(name: Notification.Name(beaconRSSIUpdate), object: beacon)
-                    }
+            var key = getKey(stringBuilder!!, beacon)
+           /* if (key != null) {
+                Log.i(
+                    "savedBeacon",
+                    "Get:${Gson().toJson(mBeacons!!.get(key))}--->Key${Gson().toJson(mBeacons!![key])}"
+                )
+                var sighting = mBeacons.get(key)
+                if (sighting == null) {
+                    mBeacons.put(key, beacon)
                 } else {
-                    if (device != null) {
-                        beacon.beaconIdentifier = device.tagIdentifier
-                        beacon.assetType = device.assetType
-                        beacon.assetIdentifier = device.assetIdentifier
-                        beacon = mBeacons!![key]
+                    sighting.update(beacon)
+                }
+            }*/
+            var savedBeacon : TSBeacon? = null
+            if(mBeacons[key] != null)
+            {
+                    savedBeacon = mBeacons[key]
+                    if (savedBeacon != null) {
+                        val savedRSSI = savedBeacon.RSSI
+                        val rssi = beacon.RSSI
+                        if(savedRSSI != null && rssi != null)
+                        {
+                            val beaconIdentifier = savedBeacon.beaconIdentifier
+                            beacon.beaconIdentifier = beaconIdentifier
+                            beacon.assetType = savedBeacon.assetType
+                            beacon.assetIdentifier = savedBeacon.assetIdentifier
+                        }
 
-//       NotificationCenter.default.post(Notification.Name(beaconRSSIUpdate))
+                        if (rssi != 0) {
+                            if (rssi >= savedRSSI) {
+                                mBeacons[key] = beacon
+                            }
+                            //Update modar if Beacon changes
+                            if (rssi != savedRSSI) {
+
+                                //       NotificationCenter.default.post(name: Notification.Name(beaconRSSIUpdate), object: beacon)
+                            }
+                        }
                     }
                 }
-//     NotificationCenter.default.post(Notification.Name(beaconDetected), object: getBeaconWithIdentifiers())
-
-
+            else {
+                val device = mTrackingDevices.get(key)
+                if (device != null) {
+                    beacon.beaconIdentifier = device.tagIdentifier
+                    beacon.assetType = device.assetType
+                    beacon.assetIdentifier = device.assetIdentifier
+                    mBeacons.put(key,beacon)
+                    //RSSI update for Modar Mode
+                    // NotificationCenter.default.post(name: Notification.Name(beaconRSSIUpdate), object: beacon)
+                }
+                else
+                {
+                    var sighting = mBeacons.get(key)
+                    if (sighting == null) {
+                        mBeacons.put(key, beacon)
+                    } else {
+                        sighting.update(beacon)
+                    }
+                }
             }
+            getBeaconWithIdentifiers()
         }
 
 
     }
+
+    /// This function generates a unique key for saving the beacons to the dictionary
+    ///
+    /// - Parameter beacon: the relevant beacon
+    /// - Returns: return a unique key using the beaconid, the major and minor.
 
     private fun getKey(sb : StringBuilder, beacon: TSBeacon) : String {
         sb.delete(0, sb.length)
@@ -151,49 +182,55 @@ object TSBeaconManagers {
     }
 
     fun beaconExists(UUID: String, minor: String) : Boolean {
-        val beacon = mBeacons?.get("${UUID}-${minor}")
+        val beacon = mBeacons["${UUID}-${minor}"]
         return beacon != null
     }
 
-    fun getBeaconWithIdentifiers() : Dictionary<String, TSBeacon>? {
-        var beacons : Dictionary<String, TSBeacon>? = null
-        val itr = mBeacons!!.keys().iterator()
+    fun getBeaconWithIdentifiers() : HashMap<String, TSBeacon>? {
+        var beacons : HashMap<String, TSBeacon>? = HashMap()
+        val itr = mBeacons.keys.iterator()
         while (itr.hasNext()) {
             val key = itr.next()
-            val value = mBeacons!![key]
-            if (value.beaconIdentifier != "" && value.beaconIdentifier != null) {
-                mBeacons?.get("${key}-${value}")
+            val value = mBeacons[key]
+            if (value!!.beaconIdentifier != "" && value.beaconIdentifier != null) {
+                mBeacons.get("${key}-${value}")
+                beacons!![key] = value
+            }
+        }
+        Log.i("getBeaconIdentifier", Gson().toJson(beacons))
+        return beacons
+    }
+
+    fun updateTrackingDevices() : HashMap<String, TSDevice>? {
+        var beacons : HashMap<String, TSDevice>? = null
+        val itr = mBeacons.keys.iterator()
+        while (itr.hasNext()) {
+            val key = itr.next()
+            val value = mBeacons[key]
+            if (value!!.beaconIdentifier != "" && value.beaconIdentifier != null) {
+                mBeacons[key] = value
             }
         }
 
         return beacons
     }
 
-    fun updateTrackingDevices() : Dictionary<String, TSDevice>? {
-        var beacons : Dictionary<String, TSDevice>? = null
-        val itr = mBeacons!!.keys().iterator()
-        while (itr.hasNext()) {
-            val key = itr.next()
-            val value = mBeacons!![key]
-            if (value.beaconIdentifier != "" && value.beaconIdentifier != null) {
-                mBeacons?.put(key,value)
-            }
+
+    fun updateTrackingDevices(devices:  ArrayList<TSDevice>?) {
+         devices?.forEach {
+            val key = getKey(stringBuilder!!,it)
+            mTrackingDevices[key] = it
+
         }
-
-        return beacons
-    }
-
-
-    fun updateTrackingDevices(devices:  Dictionary<String, TSDevice>?) {
-
-        val itr = devices!!.keys().iterator()
+        Log.i("trackingDevice","-->${Gson().toJson(mTrackingDevices)}")
+       /* val itr = devices!!.keys.iterator()
         while (itr.hasNext()) {
             val key = itr.next()
 
             val value = devices[key]
-            val keys = getKey(stringBuilder!!,value)
-            mTrackingDevices!!.put(keys,value)
-        }
+            val keys = getKey(stringBuilder!!,value!!)
+            mTrackingDevices.put(keys,value)
+        }*/
     }
 
 }

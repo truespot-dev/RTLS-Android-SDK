@@ -10,7 +10,9 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.observe
 import com.example.truespotrtlsandroid.models.Credentials
+import com.example.truespotrtlsandroid.models.PairRequestBody
 import com.example.truespotrtlsandroid.models.TSApplication
+import com.example.truespotrtlsandroid.models.TSDevice
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
 
@@ -33,7 +35,7 @@ object BeaconServices {
                     {
                         val result = it.data
                         Credentials.jwt = result.jwt
-                        var appInfo = TSApplication()
+                       /* var appInfo = TSApplication()
                         appInfo.id = "620c3bf2f840f63c650eca3a"
                         appInfo.description = ""
                         appInfo.name ="Ikon"
@@ -41,8 +43,9 @@ object BeaconServices {
                         Credentials.appInfo = appInfo
 
                         locationManager =  TSLocationManager(context,activity)
-                        locationManager!!.startScanning()
-                       // getAppinfo(viewModelStoreOwner,viewLifecycleOwner,context,activity)
+                        locationManager!!.startScanning()*/
+                        getAppinfo(viewModelStoreOwner,viewLifecycleOwner,context,activity)
+                        getTrackingDevices(viewModelStoreOwner,viewLifecycleOwner,context,activity)
                     }
                     else
                     {
@@ -80,6 +83,7 @@ object BeaconServices {
                         Credentials.appInfo = result
                         locationManager =  TSLocationManager(context,activity)
                         locationManager!!.startScanning()
+
                     }
                     else
                     {
@@ -121,7 +125,8 @@ object BeaconServices {
             {
                 Status.SUCCESS ->
                 {
-
+                    val device = it.data
+                    TSBeaconManagers.updateTrackingDevices(device)
                 }
                 Status.LOADING ->{}
 
@@ -131,11 +136,11 @@ object BeaconServices {
         }
     }
 
-    fun  pair(viewModelStoreOwner: ViewModelStoreOwner,viewLifecycleOwner: LifecycleOwner,context: Context,activity: Activity,tagID : String)
+    fun  pair(pairRequestBody: PairRequestBody?,viewModelStoreOwner: ViewModelStoreOwner, viewLifecycleOwner: LifecycleOwner, context: Context, activity: Activity, tagID : String)
     {
         val beaconBaseServiceViewModel : BeaconBaseServiceViewModel  = ViewModelProvider(viewModelStoreOwner,BeaconBaseServiceViewModelFactory(activity.application, BaseApiHelper(BaseRetrofitBuilder.apiBaseService)))
             .get(BeaconBaseServiceViewModel::class.java)
-        beaconBaseServiceViewModel.pair(tagID).observe(viewLifecycleOwner)
+        beaconBaseServiceViewModel.pair(pairRequestBody,tagID).observe(viewLifecycleOwner)
         {
             when(it.status)
             {
@@ -159,7 +164,7 @@ object API{
     val RTLSBaseURL = "https://rtls-d-us-c-api.azurewebsites.net"
 
     //PROD
-    //val RTLSBaseURL = "https://rtls.truespot.com/"
+  //  val RTLSBaseURL = "https://rtls.truespot.com/"
 
     object Endpoint{
       const val authorization = "api/api-authorizations"

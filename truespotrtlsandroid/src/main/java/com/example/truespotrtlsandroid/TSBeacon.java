@@ -47,6 +47,133 @@ public class TSBeacon extends BaseJSONModel {
     @SerializedName("assetType")
     public String assetType;
 
+    public String getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getBeaconIdentifier() {
+        return beaconIdentifier;
+    }
+
+    public void setBeaconIdentifier(String beaconIdentifier) {
+        this.beaconIdentifier = beaconIdentifier;
+    }
+
+    public boolean isActive() {
+        return isActive;
+    }
+
+    public void setActive(boolean active) {
+        isActive = active;
+    }
+
+    public String getVin() {
+        return vin;
+    }
+
+    public void setVin(String vin) {
+        this.vin = vin;
+    }
+
+    public double getLat() {
+        return lat;
+    }
+
+    public void setLat(double lat) {
+        this.lat = lat;
+    }
+
+    public double getLng() {
+        return lng;
+    }
+
+    public void setLng(double lng) {
+        this.lng = lng;
+    }
+
+    public long getTimeStamp() {
+        return timeStamp;
+    }
+
+    public void setTimeStamp(long timeStamp) {
+        this.timeStamp = timeStamp;
+    }
+
+    public int getRSSI() {
+        return RSSI;
+    }
+
+    public void setRSSI(int RSSI) {
+        this.RSSI = RSSI;
+    }
+
+    public double getAccuracy() {
+        return accuracy;
+    }
+
+    public void setAccuracy(double accuracy) {
+        this.accuracy = accuracy;
+    }
+
+    public String getMajor() {
+        return major;
+    }
+
+    public void setMajor(String major) {
+        this.major = major;
+    }
+
+    public String getMinor() {
+        return minor;
+    }
+
+    public void setMinor(String minor) {
+        this.minor = minor;
+    }
+
+    public Proximity getProximity() {
+        return proximity;
+    }
+
+    public void setProximity(Proximity proximity) {
+        this.proximity = proximity;
+    }
+
+    public String getAssetIdentifier() {
+        return assetIdentifier;
+    }
+
+    public void setAssetIdentifier(String assetIdentifier) {
+        this.assetIdentifier = assetIdentifier;
+    }
+
+    public String getAssetType() {
+        return assetType;
+    }
+
+    public void setAssetType(String assetType) {
+        this.assetType = assetType;
+    }
 
     TSBeacon(TSBeaconSighting  beacon, CLLocation currentLocation) {
         lat = currentLocation.coordinate.latitude !=null ? Double.parseDouble(currentLocation.coordinate.latitude) : 0 ;
@@ -78,6 +205,12 @@ public class TSBeacon extends BaseJSONModel {
         minor = device.minor;
         assetIdentifier = device.assetIdentifier;
         assetType = device.assetType;
+    }
+
+    public void update(TSBeacon other)
+    {
+        this.RSSI = other.getRSSI();
+        this.timeStamp= other.getTimeStamp();
     }
 
     public boolean alreadyAssigned() {
