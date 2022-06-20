@@ -81,18 +81,33 @@ class BeaconManagers(context: Context, activity: Activity) : ScanCallback() {
                 }
                 if(!beaconUpdatedList!!.isNullOrEmpty())
                 {
+                   // var index = 0
+                  //  var beaconUpdatedRSSIList : MutableList<TSBeaconSighting>? = ArrayList()
                     beaconList.forEach { result ->
-                        val listIterator2 = beaconUpdatedList?.iterator()
+                        beaconUpdatedList?.forEach {
+                            if(!beaconUpdatedList!!.contains(it))
+                            {
+                                if(it.beaconId.equals(result.beaconId))
+                                {
+                                    if (it.rssi != result.rssi) {
+                                        beaconUpdatedList!!.remove(it)
+                                        beaconUpdatedList!![beaconUpdatedList!!.indexOf(it)] = result
+                                    }
+                                }
+                            }
+
+                            //index++
+                        }
+
+                        /*val listIterator2 = beaconUpdatedList?.iterator()
                         while (listIterator2?.hasNext() == true) {
                             val tmp = listIterator2.next()
                             if(tmp.beaconId.equals(result.beaconId))
                             {
-                                if (tmp.rssi != result.rssi) {
-                                    listIterator2.remove()
-                                    beaconUpdatedList!!.add(result)
-                                }
+                                   beaconUpdatedList!!.remove(result)
+                                   beaconUpdatedList!!.add(result)
                             }
-                        }
+                        }*/
                     }
 
 

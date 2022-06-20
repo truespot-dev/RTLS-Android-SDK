@@ -39,7 +39,6 @@ class TSLocationManager(context : Context, activity: Activity) {
     init {
 
         requestLocationPermission()
-        Toast.makeText(mContext,"Location-->init", Toast.LENGTH_LONG).show()
         /*val uuids = Credentials.appInfo.uuids.toCollection(ArrayList())
         if(uuids.isNotEmpty())
         {
@@ -56,7 +55,7 @@ class TSLocationManager(context : Context, activity: Activity) {
     }
 
 
-    private fun requestLocationPermission()
+    fun requestLocationPermission()
     {
         if(isLocationServiceEnabled(mContext))
         {
@@ -141,6 +140,4 @@ class TSLocationManager(context : Context, activity: Activity) {
             mode != Settings.Secure.LOCATION_MODE_OFF
         }
     }
-
-
 }

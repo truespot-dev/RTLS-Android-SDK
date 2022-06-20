@@ -42,12 +42,12 @@ object TSBeaconManagers {
     }
 
 
-    fun observeBeaconRanged() {
-
+    fun observeBeaconRanged(beaconMap : HashMap<String, TSBeacon>? ) : HashMap<String, TSBeacon>?{
+        return beaconMap
     }
 
-    fun observeBeaconRSSI() {
-
+    fun observeBeaconRSSI(beacon :  TSBeacon) : String{
+       return beacon.beaconIdentifier
     }
 
 
@@ -147,7 +147,7 @@ object TSBeaconManagers {
                     }
                 }
             }
-            getBeaconWithIdentifiers()
+            observeBeaconRanged(getBeaconWithIdentifiers())
         }
 
 

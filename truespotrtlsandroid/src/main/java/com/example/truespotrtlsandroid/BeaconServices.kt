@@ -136,7 +136,7 @@ object BeaconServices {
         }
     }
 
-    fun  pair(pairRequestBody: PairRequestBody?,viewModelStoreOwner: ViewModelStoreOwner, viewLifecycleOwner: LifecycleOwner, context: Context, activity: Activity, tagID : String)
+    fun  pair(pairRequestBody: PairRequestBody?,tagID : String,viewModelStoreOwner: ViewModelStoreOwner, viewLifecycleOwner: LifecycleOwner, context: Context, activity: Activity)
     {
         val beaconBaseServiceViewModel : BeaconBaseServiceViewModel  = ViewModelProvider(viewModelStoreOwner,BeaconBaseServiceViewModelFactory(activity.application, BaseApiHelper(BaseRetrofitBuilder.apiBaseService)))
             .get(BeaconBaseServiceViewModel::class.java)
@@ -144,7 +144,9 @@ object BeaconServices {
         {
             when(it.status)
             {
-                Status.SUCCESS ->{}
+                Status.SUCCESS ->{
+
+                }
                 Status.LOADING ->{}
                 Status.ERROR ->{}
             }
