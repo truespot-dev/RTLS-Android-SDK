@@ -7,7 +7,6 @@ import android.location.LocationManager
 import android.os.Build
 import android.os.Handler
 import android.provider.Settings
-import android.widget.Toast
 import com.example.truespotrtlsandroid.beacon.BeaconRegion
 import com.example.truespotrtlsandroid.models.Credentials
 import com.google.android.gms.common.api.GoogleApiClient
@@ -16,14 +15,12 @@ import java.util.*
 import kotlin.collections.ArrayList
 
 
-
-
-class TSLocationManager(context : Context, activity: Activity) {
+class TSLocationManager(context: Context, activity: Activity) {
     //val shared = TSLocationManager(context,activity)
     val mContext = context
     val mActivity = activity
     private var cLocationManager: LocationManagers? = null
-    private var locationManager : LocationManager? = null
+    private var locationManager: LocationManager? = null
     var currentLocation: Location? = null
     private val handlerLocation: Handler? = null
     protected var googleApiClient: GoogleApiClient? = null
@@ -33,97 +30,86 @@ class TSLocationManager(context : Context, activity: Activity) {
 
     val beaconRegion: ArrayList<BeaconRegion>? = null
 
-    var beaconManager : BeaconManagers? = null
+    var beaconManager: BeaconManagers? = null
 
 
     init {
 
         requestLocationPermission()
-        /*val uuids = Credentials.appInfo.uuids.toCollection(ArrayList())
+       /* val uuids = Credentials.appInfo.uuids.toCollection(ArrayList())
         if(uuids.isNotEmpty())
         {
             for (uuid in uuids) {
-                beaconRegion!!.add(BeaconRegion("ranged beacons ${uuids.indexOf(uuid)}",TSLocationManager(context,activity).beaconUUID as UUID,0,0))
+                beaconRegion?.add(BeaconRegion("ranged beacons ${uuids.indexOf(uuid)}",TSLocationManager(context,activity).beaconUUID as UUID,0,0))
             }
         }
         else
         {
-            beaconRegion!!.add(BeaconRegion("ranged beacons ${0}","5C38DBDE-567C-4CCA-B1DA-40A8AD465656" as UUID,0,0))
+            beaconRegion?.add(BeaconRegion("ranged beacons ${0}","5C38DBDE-567C-4CCA-B1DA-40A8AD465656" as UUID,0,0))
         }*/
 
-        beaconManager = BeaconManagers(context,activity)
+        beaconManager = BeaconManagers(context, activity)
     }
 
 
-    fun requestLocationPermission()
-    {
-        if(isLocationServiceEnabled(mContext))
-        {
-            cLocationManager = LocationManagers(mContext,mActivity)
-          //  cLocationManager!!.startLocationUpdates()
+    fun requestLocationPermission() {
+        if (isLocationServiceEnabled(mContext)) {
+            cLocationManager = LocationManagers(mContext, mActivity)
+//              cLocationManager?.startLocationUpdates()
             startScanning()
 
         }
 
     }
 
-    fun startScanning()
-    {
+    fun startScanning() {
         updateLocation(true)
         startMonitoring()
-       /* for(region in beaconRegion!!)
-        {
-            startMonitoring(region)
-        }*/
-
-      //  TSBeaconManagers.initializeBeaconObserver()
+         /*for(region in beaconRegion!!)
+         {
+             startMonitoring(region)
+         }
+*/
+        //  TSBeaconManagers.initializeBeaconObserver()
 
 
     }
 
-    fun  stopScanning()
-    {
+    fun stopScanning() {
         updateLocation(false)
         stopMonitoring()
     }
 
 
+    private fun updateLocation(start: Boolean) {
 
-    private fun updateLocation(start: Boolean)
-    {
-
-        if(cLocationManager == null)
-        {
+        if (cLocationManager == null) {
             Timber.i("=====Location Manager NIL======")
             return
         }
-        if(start){
+        if (start) {
             Timber.i("=====Location Manager Start Updating======")
-           // cLocationManager!!.startLocationUpdates()
+//             cLocationManager?.startLocationUpdates()
 
-        }
-        else
-        {
+        } else {
             Timber.i("=====Location Manager Stop Updating======")
-           // cLocationManager!!.stopLocationUpdates()
+            // cLocationManager?.stopLocationUpdates()
         }
 
     }
 
 
-  /*  private fun startMonitoring(beaconRegion: BeaconRegion)
-    {
-       beaconManager!!.startMonitoring(beaconRegion)
-    }*/
-    private fun startMonitoring()
-    {
-        beaconManager = BeaconManagers(mContext,mActivity)
-        beaconManager!!.startMonitoring()
+    /*  private fun startMonitoring(beaconRegion: BeaconRegion)
+      {
+         beaconManager?.startMonitoring(beaconRegion)
+      }*/
+    private fun startMonitoring() {
+        beaconManager = BeaconManagers(mContext, mActivity)
+        beaconManager?.startMonitoring()
     }
 
-    private fun stopMonitoring()
-    {
-       beaconManager!!.stopMonitoring()
+    private fun stopMonitoring() {
+        beaconManager?.stopMonitoring()
     }
 
     private fun isLocationServiceEnabled(context: Context): Boolean {

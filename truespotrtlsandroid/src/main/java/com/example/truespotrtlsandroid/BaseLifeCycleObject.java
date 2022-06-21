@@ -17,6 +17,7 @@ public abstract class BaseLifeCycleObject {
             Timber.d(TAG + ".create() already created. createdCount:" + createdCount);
         }
     }
+
     protected abstract void onCreate();
 
     public void resume() {
@@ -32,6 +33,7 @@ public abstract class BaseLifeCycleObject {
             Timber.d(TAG + ".resume() already resumed. resumedCount:" + resumedCount);
         }
     }
+
     protected abstract void onResume();
 
     public void pause() {
@@ -47,6 +49,7 @@ public abstract class BaseLifeCycleObject {
             Timber.d(TAG + ".pause() ignoring. resumedCount:" + resumedCount);
         }
     }
+
     protected abstract void onPause();
 
     public void destroy() {
@@ -62,6 +65,7 @@ public abstract class BaseLifeCycleObject {
             Timber.d(TAG + ".destroy() ignoring. createdCount:" + createdCount);
         }
     }
+
     protected abstract void onDestroy();
 
     protected boolean isResumed() {

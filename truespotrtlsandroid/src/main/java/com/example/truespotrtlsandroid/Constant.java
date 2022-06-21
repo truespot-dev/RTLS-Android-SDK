@@ -7,6 +7,7 @@ public class Constant {
         public static final long LOCATION_REQUEST_INTERVAL_MILLIS = 5 * 1000;
         public static final long LOCATION_UPDATE_PAUSE_TIMEOUT_MILLIS = 2000;
     }
+
     public class BeaconManager {
         //public static final int MIN_RSSI_DELTA_THRESHOLD = 5;
         public static final int MIN_RSSI_DELTA_THRESHOLD = 0; // For now ignore threshold

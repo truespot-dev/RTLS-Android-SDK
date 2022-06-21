@@ -9,14 +9,17 @@ import retrofit2.http.Path
 
 interface BeaconBaseAPIServices {
 
-    @GET("/${API.Endpoint.applications}"+"?self")
+    @GET("/${API.Endpoint.applications}" + "?self")
     suspend fun getAppinfo(): TSApplication
 
     @GET("/${API.Endpoint.trackingDevices}")
     suspend fun getTrackingDevices(): ArrayList<TSDevice>
 
     @GET("/${API.Endpoint.trackingDevices}/{tagId}/pairings")
-    suspend fun pair(@Body pairRequestBody: PairRequestBody?,@Path("tagId") tagId: String, ): Array<TSDevice>
+    suspend fun pair(
+        @Body pairRequestBody: PairRequestBody?,
+        @Path("tagId") tagId: String,
+    ): Array<TSDevice>
 
 
 }

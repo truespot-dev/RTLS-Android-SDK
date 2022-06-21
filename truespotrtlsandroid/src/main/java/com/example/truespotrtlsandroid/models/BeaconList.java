@@ -20,8 +20,8 @@ public class BeaconList {
 
     public Beacon getFoundBeaconIfExists(String address, BeaconType beaconType) {
         if (this.mFoundBeacons.containsKey(address)) {
-            ConcurrentHashMap<BeaconType, Beacon> beacons = (ConcurrentHashMap)this.mFoundBeacons.get(address);
-            return beacons.containsKey(beaconType) ? (Beacon)beacons.get(beaconType) : null;
+            ConcurrentHashMap<BeaconType, Beacon> beacons = (ConcurrentHashMap) this.mFoundBeacons.get(address);
+            return beacons.containsKey(beaconType) ? (Beacon) beacons.get(beaconType) : null;
         } else {
             return null;
         }
@@ -30,7 +30,7 @@ public class BeaconList {
     public void addBeacon(Beacon beacon) {
         ConcurrentHashMap beacons;
         if (this.mFoundBeacons.containsKey(beacon.mDevice.getAddress())) {
-            beacons = (ConcurrentHashMap)this.mFoundBeacons.get(beacon.mDevice.getAddress());
+            beacons = (ConcurrentHashMap) this.mFoundBeacons.get(beacon.mDevice.getAddress());
             beacons.put(beacon.getBeaconType(), beacon);
         } else {
             beacons = new ConcurrentHashMap();

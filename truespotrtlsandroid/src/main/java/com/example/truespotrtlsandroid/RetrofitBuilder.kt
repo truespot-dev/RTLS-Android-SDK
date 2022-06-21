@@ -13,7 +13,7 @@ object RetrofitBuilder {
     private fun getAuthURLRetrofit(): Retrofit {
         val headersInterceptor = Interceptor { chain ->
             val requestBuilder = chain.request().newBuilder()
-            requestBuilder.header("Authorization",  "Basic ${Credentials.clientSecret}")
+            requestBuilder.header("Authorization", "Basic ${Credentials.clientSecret}")
             chain.proceed(requestBuilder.build())
         }
         val okHttpClient = OkHttpClient()
@@ -23,15 +23,16 @@ object RetrofitBuilder {
             .build()
 
 
-        val retrofit2 : Retrofit = Retrofit.Builder()
-                .baseUrl(API.authURL)
-                .client(okHttpClient)
-                .addConverterFactory(JacksonConverterFactory.create())
-                .build() //Doesn't require the adapter
+        val retrofit2: Retrofit = Retrofit.Builder()
+            .baseUrl(API.authURL)
+            .client(okHttpClient)
+            .addConverterFactory(JacksonConverterFactory.create())
+            .build() //Doesn't require the adapter
         return retrofit2
     }
 
-    val apiAuthService: BeaconAPIServices = getAuthURLRetrofit().create(BeaconAPIServices::class.java)
+    val apiAuthService: BeaconAPIServices =
+        getAuthURLRetrofit().create(BeaconAPIServices::class.java)
 
 
 }

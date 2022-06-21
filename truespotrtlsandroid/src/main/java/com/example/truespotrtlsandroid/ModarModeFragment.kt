@@ -31,17 +31,17 @@ import java.util.*
 import java.util.concurrent.TimeUnit
 import kotlin.collections.ArrayList
 
-class ModarModeFragment(var mCurrentTag : String) :  BottomSheetDialogFragment() {
+class ModarModeFragment(var mCurrentTag: String) : BottomSheetDialogFragment() {
 
     var isSetProcess = false
     var isBeepSound = false
 
-    var countDownTimer : CountDownTimer? = null
+    var countDownTimer: CountDownTimer? = null
     var mMediaPlayer: MediaPlayer? = null
-    var lastSeenDate : Date? = null
+    var lastSeenDate: Date? = null
     val mBundle = Bundle()
     var mDeviceCount = 0
-    var arrayList : ArrayList<String> = ArrayList()
+    var arrayList: ArrayList<String> = ArrayList()
     var jsonObject = JsonObject()
     var gson = Gson()
     var mHandler = Handler(Looper.getMainLooper())
@@ -56,17 +56,18 @@ class ModarModeFragment(var mCurrentTag : String) :  BottomSheetDialogFragment()
     var nearRSSILocationDictionary: MutableList<ItemDistance> = ArrayList()
     var immediateRSSILocationDictionary: MutableList<ItemDistance> = ArrayList()
     var volume = 100
-    var beaconManager : BeaconManagers? = null
+    var beaconManager: BeaconManagers? = null
 
-    private val mBottomSheetBehaviorCallback: BottomSheetBehavior.BottomSheetCallback = object : BottomSheetBehavior.BottomSheetCallback() {
-        override fun onStateChanged(@NonNull bottomSheet: View, newState: Int) {
-            if (newState == BottomSheetBehavior.STATE_HIDDEN) {
-                dismiss()
+    private val mBottomSheetBehaviorCallback: BottomSheetBehavior.BottomSheetCallback =
+        object : BottomSheetBehavior.BottomSheetCallback() {
+            override fun onStateChanged(@NonNull bottomSheet: View, newState: Int) {
+                if (newState == BottomSheetBehavior.STATE_HIDDEN) {
+                    dismiss()
+                }
             }
-        }
 
-        override fun onSlide(@NonNull bottomSheet: View, slideOffset: Float) {}
-    }
+            override fun onSlide(@NonNull bottomSheet: View, slideOffset: Float) {}
+        }
 
     companion object {
         const val TAG = "FindTagFragment"
@@ -88,14 +89,15 @@ class ModarModeFragment(var mCurrentTag : String) :  BottomSheetDialogFragment()
     }
 
     private fun triggerAutoUpdate() {
-        mHandler.post(object : Runnable{
+        mHandler.post(object : Runnable {
             override fun run() {
-                if (this@ModarModeFragment.isAdded){
-                    Log.e("status","check Update-----> $isBeepSound")
-                    requireFragmentManager().beginTransaction().detach(this@ModarModeFragment).attach(this@ModarModeFragment).commit()
+                if (this@ModarModeFragment.isAdded) {
+                    Log.e("status", "check Update-----> $isBeepSound")
+                    requireFragmentManager().beginTransaction().detach(this@ModarModeFragment)
+                        .attach(this@ModarModeFragment).commit()
                 }
 
-                mHandler.postDelayed(this,10000)
+                mHandler.postDelayed(this, 10000)
             }
 
         })
@@ -117,19 +119,19 @@ class ModarModeFragment(var mCurrentTag : String) :  BottomSheetDialogFragment()
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        binding.btnCloseIcon.setOnClickListener{
+        binding.btnCloseIcon.setOnClickListener {
 
             stopSound()
             dismiss()
-            if(countDownTimer != null) {
-                countDownTimer!!.cancel()
+            if (countDownTimer != null) {
+                countDownTimer?.cancel()
                 countDownTimer = null
             }
             //mCommonCallBack.upDateData("find_tag_close")
         }
 
         calculatTagLocation()
-        beaconManager = BeaconManagers(requireContext(),requireActivity())
+        beaconManager = BeaconManagers(requireContext(), requireActivity())
 
         binding.tvCurentTag.text = mCurrentTag
 
@@ -139,48 +141,56 @@ class ModarModeFragment(var mCurrentTag : String) :  BottomSheetDialogFragment()
                 volume = 0
                 isBeepSound = true
                 stopSound()
-                binding.btnCheckOut.setImageDrawable(ContextCompat.getDrawable(requireActivity(),R.drawable.ic_speaker_mute))
+                binding.btnCheckOut.setImageDrawable(
+                    ContextCompat.getDrawable(
+                        requireActivity(),
+                        R.drawable.ic_speaker_mute
+                    )
+                )
             } else {
                 volume = 100
                 isBeepSound = false
                 playSound()
-                binding.btnCheckOut.setImageDrawable(ContextCompat.getDrawable(requireActivity(),R.drawable.ic_speaker))
+                binding.btnCheckOut.setImageDrawable(
+                    ContextCompat.getDrawable(
+                        requireActivity(),
+                        R.drawable.ic_speaker
+                    )
+                )
             }
         }
 
-        countDownTimer = object : CountDownTimer(30000,500) {
+        countDownTimer = object : CountDownTimer(30000, 500) {
             override fun onTick(millisUntilFinished: Long) {
-                beaconManager!!.startMonitoring()
-                var result1 : MutableList<TSBeaconSighting>? = beaconManager!!.beaconUpdatedList
-                Log.i("result1","--->${Gson().toJson(result1)}")
-              val result : Collection<TSBeacon> = TSBeaconManagers.getBeaconWithIdentifiers()!!.values
-                Log.i("findTag","--->${Gson().toJson(result)}")
+                beaconManager?.startMonitoring()
+                var result1: MutableList<TSBeaconSighting>? = beaconManager?.beaconUpdatedList
+                Log.i("result1", "--->${Gson().toJson(result1)}")
+                val result: Collection<TSBeacon> =
+                    TSBeaconManagers.getBeaconWithIdentifiers()!!.values
+                Log.i("findTag", "--->${Gson().toJson(result)}")
                 if (result != null) {
                     //val result: List<MoLoCarBeaconSighting> = beaconManager!!.beaconSightings
-                    var tempData : TSBeacon? = null
-                    for (data : TSBeacon in result) {
+                    var tempData: TSBeacon? = null
+                    for (data: TSBeacon in result) {
                         if (mCurrentTag.equals(data.getBeaconIdentifier())) {
                             tempData = data
                             break
                         }
 
                     }
-                    if(activity != null)
-                    {
-                        activity!!.runOnUiThread {
+                    if (activity != null) {
+                        activity?.runOnUiThread {
 
-                            if (tempData!= null) {
+                            if (tempData != null) {
                                 //   FastModarManager.getInstance(activity).startFastModarMode(tempData!!.deviceAddress)
-                                if(previousRSSIValue != tempData.rssi)
-                                {
+                                if (previousRSSIValue != tempData.rssi) {
                                     setProgress(tempData.rssi)
                                     previousRSSIValue = tempData.rssi
                                     binding.pairedTag.visibility = View.VISIBLE
-                                    binding.pairedTag.setText(tempData?.rssi.toString()+"\nrssi")
+                                    binding.pairedTag.setText(tempData?.rssi.toString() + "\nrssi")
                                     binding.progressIndicator.visibility = View.GONE
                                     binding.tvNearSearch.visibility = View.GONE
-                                    if (isBeepSound)
-                                    {
+                                    if (isBeepSound) {
                                         stopSound()
                                     } else {
                                         playSound()
@@ -203,8 +213,8 @@ class ModarModeFragment(var mCurrentTag : String) :  BottomSheetDialogFragment()
             override fun onFinish() {
 
                 context.let {
-                    Timber.e("CountDownTimer ==>>" )
-                    countDownTimer!!.start()
+                    Timber.e("CountDownTimer ==>>")
+                    countDownTimer?.start()
                     stopSound()
 
                     if (!isSetProcess) {
@@ -215,8 +225,7 @@ class ModarModeFragment(var mCurrentTag : String) :  BottomSheetDialogFragment()
                             .setPositiveButton("OK") { _, _ ->
                                 initializeSetTagProcess()
                             }.show()
-                    }
-                    else{
+                    } else {
                         mDeviceCount = mDeviceCount.inc()
                     }
 
@@ -231,64 +240,66 @@ class ModarModeFragment(var mCurrentTag : String) :  BottomSheetDialogFragment()
     private fun playSound() {
         // Log.e("status","check Update-----> $isBeepSound")
         mMediaPlayer = MediaPlayer.create(requireContext(), R.raw.hollow)
-        mMediaPlayer!!.start()
+        mMediaPlayer?.start()
 
     }
+
     private fun stopSound() {
 
         if (mMediaPlayer != null) {
-            mMediaPlayer!!.stop()
-            mMediaPlayer!!.release()
+            mMediaPlayer?.stop()
+            mMediaPlayer?.release()
             mMediaPlayer = null
             mHandler.removeCallbacksAndMessages(null)
         }
     }
-    private fun setProgress( range: Int) {
+
+    private fun setProgress(range: Int) {
         isSetProcess = true
         var percentage = 0.0
         val param = binding.pairedTag.layoutParams as ViewGroup.MarginLayoutParams
-        jsonObject.addProperty("setProgress1","setProgress:Method:==>range"+range)
-        var margin :  Int = 0;
+        jsonObject.addProperty("setProgress1", "setProgress:Method:==>range" + range)
+        var margin: Int = 0;
 
 
         var mOriginalValue = range
-        if (range < 0){
+        if (range < 0) {
             mOriginalValue = range * -1
         }
-        jsonObject.addProperty("setProgress2","setProgress:mOriginalValue:==>"+mOriginalValue)
+        jsonObject.addProperty("setProgress2", "setProgress:mOriginalValue:==>" + mOriginalValue)
 
-        if (mOriginalValue >= 75){
+        if (mOriginalValue >= 75) {
 
-            for (data in farRSSILocationDictionary ) {
-                if (data.range == range){
+            for (data in farRSSILocationDictionary) {
+                if (data.range == range) {
                     margin = data.possition
                     break
                 }
             }
 
-            jsonObject.addProperty("setProgress3","setProgress:margin:==>"+margin)
+            jsonObject.addProperty("setProgress3", "setProgress:margin:==>" + margin)
 
 
-        }else if (mOriginalValue >= 53 && mOriginalValue <= 76 ) {
+        } else if (mOriginalValue >= 53 && mOriginalValue <= 76) {
 
-            for (data in nearRSSILocationDictionary ) {
-                if (data.range == range){
+            for (data in nearRSSILocationDictionary) {
+                if (data.range == range) {
                     margin = data.possition
                     break
                 }
             }
-            jsonObject.addProperty("setProgress3","setProgress:margin:==>"+margin)
+            jsonObject.addProperty("setProgress3", "setProgress:margin:==>" + margin)
 
-        }else {
+        } else {
 
-            for (data in immediateRSSILocationDictionary ) {
-                if (data.range == range){
+            for (data in immediateRSSILocationDictionary) {
+                if (data.range == range) {
                     margin = data.possition + 150
                     break
 
                 }
             }
-            jsonObject.addProperty("setProgress3","setProgress:margin:==>"+margin)
+            jsonObject.addProperty("setProgress3", "setProgress:margin:==>" + margin)
         }
 
         binding.findTagToolbar.post {
@@ -308,7 +319,12 @@ class ModarModeFragment(var mCurrentTag : String) :  BottomSheetDialogFragment()
             val marginTop = totalHeight - marHeigt
             Log.e("marginTop:", marginTop.toString())
 
-            param.setMargins(0, marginTop.toInt() + binding.findTagToolbar.layoutParams.height, 0, 0)
+            param.setMargins(
+                0,
+                marginTop.toInt() + binding.findTagToolbar.layoutParams.height,
+                0,
+                0
+            )
             binding.pairedTag.layoutParams = param
 
             binding.progressIndicator.visibility = View.INVISIBLE
@@ -323,17 +339,17 @@ class ModarModeFragment(var mCurrentTag : String) :  BottomSheetDialogFragment()
             }
             var date = lastSeenDate
             val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
-           // DisplayUtil.setText(binding.tvLastseen, "Last Seen: " + getUpdated(sdf.format(date).toString()))
+            // DisplayUtil.setText(binding.tvLastseen, "Last Seen: " + getUpdated(sdf.format(date).toString()))
             binding.tvLastseen.text = "Last Seen: " + getUpdated(sdf.format(date).toString())
             lastSeenDate = Date()
-           // mCommonCallBack.upDateData("find_tag")
+            // mCommonCallBack.upDateData("find_tag")
 
         }
 
 
     }
 
-    private fun getUpdated(updated : String): String? {
+    private fun getUpdated(updated: String): String? {
         var convTime: String? = null
         val suffix = "ago"
         // val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ", Locale.US)
@@ -352,7 +368,7 @@ class ModarModeFragment(var mCurrentTag : String) :  BottomSheetDialogFragment()
             val hour = TimeUnit.MILLISECONDS.toHours(dateDiff)
             val day = TimeUnit.MILLISECONDS.toDays(dateDiff)
             if (second < 60) {
-                convTime =  "$minute seconds $suffix"
+                convTime = "$minute seconds $suffix"
             } else if (minute < 60) {
                 convTime = "$minute minutes $suffix"
             } else if (hour < 24) {
@@ -381,11 +397,13 @@ class ModarModeFragment(var mCurrentTag : String) :  BottomSheetDialogFragment()
         val farViewHeight = binding.lytNear.layoutParams.height
 
         val nearViewYPos = binding.lytNear.layoutParams.height
-        val nearViewHeight = binding.lytImmediate.layoutParams.height - binding.lytNear.layoutParams.height
+        val nearViewHeight =
+            binding.lytImmediate.layoutParams.height - binding.lytNear.layoutParams.height
 
-        val  immediateViewYPos = binding.lytImmediate.layoutParams.height
-        val totalHei = Resources.getSystem().getDisplayMetrics().heightPixels - binding.findTagToolbar.layoutParams.height
-        val  immediateViewHeight =  totalHei - binding.lytImmediate.layoutParams.height
+        val immediateViewYPos = binding.lytImmediate.layoutParams.height
+        val totalHei = Resources.getSystem()
+            .getDisplayMetrics().heightPixels - binding.findTagToolbar.layoutParams.height
+        val immediateViewHeight = totalHei - binding.lytImmediate.layoutParams.height
 
         val farUpperRange = -100
         val farlowerRange = -75
@@ -396,25 +414,44 @@ class ModarModeFragment(var mCurrentTag : String) :  BottomSheetDialogFragment()
         val immediateUpperRange = -52
         val immediateLowerRange = -30
 
-        addValuesToRSSIDict(farRSSILocationDictionary, farUpperRange,  farlowerRange, farViewYPos,  farViewHeight)
+        addValuesToRSSIDict(
+            farRSSILocationDictionary,
+            farUpperRange,
+            farlowerRange,
+            farViewYPos,
+            farViewHeight
+        )
 
-        addValuesToRSSIDict(nearRSSILocationDictionary, nearUpperRange,nearLowerRange,  nearViewYPos,  nearViewHeight)
+        addValuesToRSSIDict(
+            nearRSSILocationDictionary,
+            nearUpperRange,
+            nearLowerRange,
+            nearViewYPos,
+            nearViewHeight
+        )
 
-        addValuesToRSSIDict(immediateRSSILocationDictionary, immediateUpperRange, immediateLowerRange,  immediateViewYPos,immediateViewHeight)
+        addValuesToRSSIDict(
+            immediateRSSILocationDictionary,
+            immediateUpperRange,
+            immediateLowerRange,
+            immediateViewYPos,
+            immediateViewHeight
+        )
 
         Timber.e("")
 
     }
 
-    private fun addValuesToRSSIDict
-                (dict: MutableList<ItemDistance>,
-                 upperRange: Int,
-                 lowerRange: Int,
-                 viewYPOS: Int,
-                 viewHeight: Int) {
+    private fun addValuesToRSSIDict(
+        dict: MutableList<ItemDistance>,
+        upperRange: Int,
+        lowerRange: Int,
+        viewYPOS: Int,
+        viewHeight: Int
+    ) {
 
         val screenSegments = viewHeight / (lowerRange - upperRange)
-        var initialYValue  = viewYPOS
+        var initialYValue = viewYPOS
 
         for (i in upperRange..lowerRange) {
             initialYValue += screenSegments
@@ -423,41 +460,40 @@ class ModarModeFragment(var mCurrentTag : String) :  BottomSheetDialogFragment()
         }
     }
 
-    private fun initializeSetTagProcess()
-    {
+    private fun initializeSetTagProcess() {
 
-        countDownTimer!!.start()
+        countDownTimer?.start()
         binding.progressIndicator.visibility = View.VISIBLE
         binding.tvNearSearch.visibility = View.VISIBLE
-      /*  if (beaconManager!!.beaconSightings != null) {
-            // Take a snapshot
-            val result: List<MoLoCarBeaconSighting> = beaconManager!!.beaconSightings
-            var tempData : MoLoCarBeaconSighting? = null
+        /*  if (beaconManager!!.beaconSightings != null) {
+              // Take a snapshot
+              val result: List<MoLoCarBeaconSighting> = beaconManager!!.beaconSightings
+              var tempData : MoLoCarBeaconSighting? = null
 
-            for (data : MoLoCarBeaconSighting in result) {
-                if (mCurrentMoloTags.beaconIdentifier.equals(data.beaconId)) {
-                    tempData = data
-                    break
-                }
+              for (data : MoLoCarBeaconSighting in result) {
+                  if (mCurrentMoloTags.beaconIdentifier.equals(data.beaconId)) {
+                      tempData = data
+                      break
+                  }
 
-            }
+              }
 
 
-            if (tempData != null) {
-                if(previousRSSIValue != tempData.rssi)
-                {
-                    setProgress(tempData.rssi)
-                    previousRSSIValue = tempData.rssi
-                    binding.pairedTag.visibility = View.VISIBLE
-                    binding.pairedTag.setText(tempData?.rssi.toString()+"\nrssi")
-                    binding.progressIndicator.visibility = View.GONE
-                    binding.tvNearSearch.visibility = View.GONE
-                    if (isBeepSound) stopSound() else playSound()
-                    mHandler.removeCallbacksAndMessages(null)
-                }
-            }
+              if (tempData != null) {
+                  if(previousRSSIValue != tempData.rssi)
+                  {
+                      setProgress(tempData.rssi)
+                      previousRSSIValue = tempData.rssi
+                      binding.pairedTag.visibility = View.VISIBLE
+                      binding.pairedTag.setText(tempData?.rssi.toString()+"\nrssi")
+                      binding.progressIndicator.visibility = View.GONE
+                      binding.tvNearSearch.visibility = View.GONE
+                      if (isBeepSound) stopSound() else playSound()
+                      mHandler.removeCallbacksAndMessages(null)
+                  }
+              }
 
-        }*/
+          }*/
     }
 
 
@@ -480,7 +516,9 @@ class ModarModeFragment(var mCurrentTag : String) :  BottomSheetDialogFragment()
         val screenHeight = displaymetrics.heightPixels
         bottomSheetBehavior.peekHeight = screenHeight - 50
         if (params.behavior is BottomSheetBehavior<*>) {
-            (params.behavior as BottomSheetBehavior<*>?)!!.setBottomSheetCallback(mBottomSheetBehaviorCallback)
+            (params.behavior as BottomSheetBehavior<*>?)?.setBottomSheetCallback(
+                mBottomSheetBehaviorCallback
+            )
         }
         params.height = screenHeight
         parent.layoutParams = params

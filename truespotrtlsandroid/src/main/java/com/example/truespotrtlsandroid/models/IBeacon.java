@@ -36,7 +36,7 @@ public class IBeacon extends Beacon implements Parcelable {
         byte[] scanRecord = this.getScanRecord();
         int startIndex = 0;
 
-        for(int i = 0; i < scanRecord.length; ++i) {
+        for (int i = 0; i < scanRecord.length; ++i) {
             if ((scanRecord[i] & 255) == 2 && (scanRecord[i + 1] & 255) == 1) {
                 startIndex = i;
                 break;
@@ -64,7 +64,7 @@ public class IBeacon extends Beacon implements Parcelable {
     }
 
     public Range calculateRange() {
-        Range range = this.calculateAccuracy(this.mTxPower, (double)this.getRssi());
+        Range range = this.calculateAccuracy(this.mTxPower, (double) this.getRssi());
         if (this.mRange != null && !this.mRange.equals(range)) {
             this.notifyOnRangeChanged(this, range);
         }
@@ -77,7 +77,7 @@ public class IBeacon extends Beacon implements Parcelable {
         if (rssi == 0.0D) {
             return Range.UNKNOWN;
         } else {
-            double ratio = rssi * 1.0D / (double)txPower;
+            double ratio = rssi * 1.0D / (double) txPower;
             return ratio < 1.0D ? Range.NEAR : Range.FAR;
         }
     }
