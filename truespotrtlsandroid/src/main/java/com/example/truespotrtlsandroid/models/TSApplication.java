@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class TSApplication extends  BaseJSONModel{
+public class TSApplication extends BaseJSONModel {
 
     @JsonProperty("id")
     public String id;

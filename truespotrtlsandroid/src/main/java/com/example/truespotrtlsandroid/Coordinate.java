@@ -9,11 +9,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @JsonIgnoreProperties(ignoreUnknown = true)*/
 public class Coordinate {
     //@JsonProperty("latitude")
-    public String  latitude;
+    public String latitude;
     //@JsonProperty("longitude")
     public String longitude;
-    public Coordinate(String  mLatitude,String mLongitude)
-    {
+
+    public Coordinate(String mLatitude, String mLongitude) {
         latitude = mLatitude;
         longitude = mLongitude;
     }

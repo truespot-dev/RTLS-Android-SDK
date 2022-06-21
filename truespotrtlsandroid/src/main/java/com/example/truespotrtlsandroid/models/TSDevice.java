@@ -6,7 +6,7 @@ import com.google.gson.annotations.SerializedName;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class TSDevice  extends  BaseJSONModel{
+public class TSDevice extends BaseJSONModel {
 
     @SerializedName("tagIdentifier")
     public String tagIdentifier;

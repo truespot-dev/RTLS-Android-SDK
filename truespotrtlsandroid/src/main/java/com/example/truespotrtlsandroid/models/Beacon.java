@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 
-public class Beacon implements Parcelable{
+public class Beacon implements Parcelable {
 
     protected static final char[] HEX_ARRAY = "0123456789ABCDEF".toCharArray();
     private final long ON_EXIT_LAST_SEEN_TOLERANCE = 5L;
@@ -94,12 +94,12 @@ public class Beacon implements Parcelable{
 
         this.exitRunnable = new NamelessClass_1();
         this.mBeaconChangeListeners = new ArrayList();
-        this.mDevice = (BluetoothDevice)in.readParcelable((ClassLoader)null);
+        this.mDevice = (BluetoothDevice) in.readParcelable((ClassLoader) null);
         this.mRssi = in.readInt();
         this.mScanRecord = new byte[in.readInt()];
         in.readByteArray(this.mScanRecord);
         this.mTxPower = in.readInt();
-        this.mBeaconType = (BeaconType)in.readParcelable(BeaconType.class.getClassLoader());
+        this.mBeaconType = (BeaconType) in.readParcelable(BeaconType.class.getClassLoader());
         this.mBattery = in.readFloat();
         this.mTemperature = in.readFloat();
         this.mLastSeen = System.currentTimeMillis();
@@ -134,8 +134,8 @@ public class Beacon implements Parcelable{
     private void notifyChangeListener() {
         Iterator var1 = this.mBeaconChangeListeners.iterator();
 
-        while(var1.hasNext()) {
-            OnBeaconChangeListener listener = (OnBeaconChangeListener)var1.next();
+        while (var1.hasNext()) {
+            OnBeaconChangeListener listener = (OnBeaconChangeListener) var1.next();
             listener.onRssiChanged(this, this.getRssi());
         }
 
@@ -176,7 +176,7 @@ public class Beacon implements Parcelable{
     public static String bytesToHex(byte[] bytes) {
         char[] hexChars = new char[bytes.length * 2];
 
-        for(int j = 0; j < bytes.length; ++j) {
+        for (int j = 0; j < bytes.length; ++j) {
             int v = bytes[j] & 255;
             hexChars[j * 2] = HEX_ARRAY[v >>> 4];
             hexChars[j * 2 + 1] = HEX_ARRAY[v & 15];
@@ -204,8 +204,8 @@ public class Beacon implements Parcelable{
                 this.setNotifiedOfOnExit(true);
                 Iterator var5 = this.mBeaconChangeListeners.iterator();
 
-                while(var5.hasNext()) {
-                    OnBeaconChangeListener beaconExitListener = (OnBeaconChangeListener)var5.next();
+                while (var5.hasNext()) {
+                    OnBeaconChangeListener beaconExitListener = (OnBeaconChangeListener) var5.next();
                     beaconExitListener.onBeaconExit(this);
                 }
             }
@@ -219,8 +219,8 @@ public class Beacon implements Parcelable{
             this.setNotifiedOfOnExit(false);
             Iterator var1 = this.mBeaconChangeListeners.iterator();
 
-            while(var1.hasNext()) {
-                OnBeaconChangeListener listener = (OnBeaconChangeListener)var1.next();
+            while (var1.hasNext()) {
+                OnBeaconChangeListener listener = (OnBeaconChangeListener) var1.next();
                 listener.onBeaconEnter(this);
             }
         }
@@ -253,7 +253,7 @@ public class Beacon implements Parcelable{
 
     public Range calculateRange() {
         int pathLoss = this.mTxPower - this.getRssi();
-        double distance = Math.pow(10.0D, (double)(pathLoss - 41) / 20.0D);
+        double distance = Math.pow(10.0D, (double) (pathLoss - 41) / 20.0D);
         Range range = Range.FAR;
         if (!(distance < 0.0D) && this.getRssi() != 127 && this.mTxPower != 127) {
             if (distance <= 0.5D) {
@@ -276,8 +276,8 @@ public class Beacon implements Parcelable{
     protected void notifyOnRangeChanged(Beacon beacon, Range range) {
         Iterator var3 = this.mBeaconChangeListeners.iterator();
 
-        while(var3.hasNext()) {
-            OnBeaconChangeListener listener = (OnBeaconChangeListener)var3.next();
+        while (var3.hasNext()) {
+            OnBeaconChangeListener listener = (OnBeaconChangeListener) var3.next();
             listener.onRangeChanged(beacon, range);
         }
 

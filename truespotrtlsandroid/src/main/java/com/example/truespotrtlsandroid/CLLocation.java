@@ -9,13 +9,12 @@ import com.google.gson.annotations.SerializedName;
 
 /*@JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)*/
-public class CLLocation  {
+public class CLLocation {
 
     public Coordinate coordinate;
     public String horizontalAccuracy;
 
-    public CLLocation(Coordinate mCoordinate,String mHorizontalAccuracy)
-    {
+    public CLLocation(Coordinate mCoordinate, String mHorizontalAccuracy) {
         coordinate = mCoordinate;
         horizontalAccuracy = mHorizontalAccuracy;
     }

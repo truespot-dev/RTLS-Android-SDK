@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Credentials extends BaseJSONModel{
+public class Credentials extends BaseJSONModel {
 
     @JsonProperty("jwt")
     public static String jwt;

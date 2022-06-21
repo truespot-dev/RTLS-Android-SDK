@@ -14,6 +14,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
@@ -29,7 +30,7 @@ import timber.log.Timber;
 public class CLLocationManager extends BaseLifeCycleObject {
 
     private final Context context;
-    private final  Activity activity;
+    private final Activity activity;
     protected GoogleApiClient googleApiClient;
     private boolean connected;
     private GoogleApiClientConnectionListener listener;
@@ -90,17 +91,14 @@ public class CLLocationManager extends BaseLifeCycleObject {
 
 */
 
-        if (checkRequiredPermission(Manifest.permission.ACCESS_FINE_LOCATION))  {
+        if (checkRequiredPermission(Manifest.permission.ACCESS_FINE_LOCATION)) {
             // Permission Enable
-        }
-        else
-        {
+        } else {
             ActivityCompat.requestPermissions(activity,
-                    new String[] { Manifest.permission.ACCESS_FINE_LOCATION }, 1);
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
         }
 
     }
-
 
 
     public Location getLastKnownLocation() {
@@ -192,11 +190,10 @@ public class CLLocationManager extends BaseLifeCycleObject {
                 firstLocation = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
                 LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, locationRequest, locationUpdateListener);
                 subscribedForLocationUpdates = true;
-            }
-            else {
+            } else {
                 Timber.i("startLocationUpdates() appending need permission");
                 ActivityCompat.requestPermissions(activity,
-                        new String[] { Manifest.permission.ACCESS_FINE_LOCATION }, 1);
+                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
             }
         }
     }
@@ -227,20 +224,17 @@ public class CLLocationManager extends BaseLifeCycleObject {
     }
 
 
-
-    public Boolean checkRequiredPermission(String permission)
-    {
+    public Boolean checkRequiredPermission(String permission) {
 
         return ContextCompat.checkSelfPermission(context, permission) == PackageManager.PERMISSION_GRANTED;
     }
-
 
 
     private class GoogleApiClientConnectionListener implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
         @Override
         public void onConnected(Bundle bundle) {
             connected = true;
-           Timber.i("onConnected()");
+            Timber.i("onConnected()");
             handlerLocation.post(startRunnableLocationUpdates);
         }
 

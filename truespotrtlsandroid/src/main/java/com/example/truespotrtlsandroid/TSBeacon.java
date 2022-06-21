@@ -175,21 +175,21 @@ public class TSBeacon extends BaseJSONModel {
         this.assetType = assetType;
     }
 
-    TSBeacon(TSBeaconSighting  beacon, CLLocation currentLocation) {
-        lat = currentLocation.coordinate.latitude !=null ? Double.parseDouble(currentLocation.coordinate.latitude) : 0 ;
-        lat = currentLocation.coordinate.longitude !=null ? Double.parseDouble(currentLocation.coordinate.longitude) : 0 ;
+    TSBeacon(TSBeaconSighting beacon, CLLocation currentLocation) {
+        lat = currentLocation.coordinate.latitude != null ? Double.parseDouble(currentLocation.coordinate.latitude) : 0;
+        lat = currentLocation.coordinate.longitude != null ? Double.parseDouble(currentLocation.coordinate.longitude) : 0;
 
         RSSI = beacon.getRSSI();
         beaconIdentifier = beacon.getBeaconId();
         accuracy = currentLocation.horizontalAccuracy != null ? Double.parseDouble(currentLocation.horizontalAccuracy) : 0;
-        uuid =  beacon.getUuid().replace("-","");
-        major = String.valueOf(beacon.getMajor()) ;
+        uuid = beacon.getUuid().replace("-", "");
+        major = String.valueOf(beacon.getMajor());
         minor = String.valueOf(beacon.getMinor());
-        timeStamp =  beacon.getTimeMillis();
+        timeStamp = beacon.getTimeMillis();
         proximity = beacon.getProximity();
     }
 
-    TSBeacon(String beaconIdentifier ) {
+    TSBeacon(String beaconIdentifier) {
         beaconIdentifier = beaconIdentifier;
     }
 
@@ -207,10 +207,9 @@ public class TSBeacon extends BaseJSONModel {
         assetType = device.assetType;
     }
 
-    public void update(TSBeacon other)
-    {
+    public void update(TSBeacon other) {
         this.RSSI = other.getRSSI();
-        this.timeStamp= other.getTimeStamp();
+        this.timeStamp = other.getTimeStamp();
     }
 
     public boolean alreadyAssigned() {
@@ -222,9 +221,8 @@ public class TSBeacon extends BaseJSONModel {
     }
 
     @Override
-    public String toString()
-    {
-        return  "Beacon ID='" + beaconIdentifier + '\'' +
+    public String toString() {
+        return "Beacon ID='" + beaconIdentifier + '\'' +
                 ", TimeStamp=" + timeStamp +
                 ", Lat=" + lat +
                 ", Long=" + lng +
@@ -236,21 +234,20 @@ public class TSBeacon extends BaseJSONModel {
                 '}';
     }
 
-   public  Dictionary toDictionary()
-   {
+    public Dictionary toDictionary() {
 
-       Dictionary<String, String> dict = new Hashtable<String, String>();
-       dict.put("lat",String.valueOf(lat));
-       dict.put("lng", String.valueOf(lng));
-       dict.put("rssi", String.valueOf(RSSI));
-       dict.put("beaconIdentifier", beaconIdentifier);
-       dict.put("accuracy", String.valueOf(accuracy));
-       dict.put("batteryLevel", beaconIdentifier);
-       dict.put("uuid", major);
-       dict.put("major", minor);
-       dict.put("timeStamp", String.valueOf(timeStamp));
-       return dict;
-   }
+        Dictionary<String, String> dict = new Hashtable<String, String>();
+        dict.put("lat", String.valueOf(lat));
+        dict.put("lng", String.valueOf(lng));
+        dict.put("rssi", String.valueOf(RSSI));
+        dict.put("beaconIdentifier", beaconIdentifier);
+        dict.put("accuracy", String.valueOf(accuracy));
+        dict.put("batteryLevel", beaconIdentifier);
+        dict.put("uuid", major);
+        dict.put("major", minor);
+        dict.put("timeStamp", String.valueOf(timeStamp));
+        return dict;
+    }
 
 
 }

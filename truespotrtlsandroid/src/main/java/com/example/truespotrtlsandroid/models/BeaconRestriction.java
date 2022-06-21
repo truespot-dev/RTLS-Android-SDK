@@ -1,6 +1,6 @@
 package com.example.truespotrtlsandroid.models;
 
-public  enum BeaconRestriction {
+public enum BeaconRestriction {
     EXCLUSIVE(0),
     INCLUSIVE(1),
     LESS_THAN(2),

@@ -8,7 +8,7 @@ import com.google.android.gms.common.internal.Preconditions;
 
 import java.util.UUID;
 
-public class BeaconRegion implements  Parcelable {
+public class BeaconRegion implements Parcelable {
 
     private final String identifier;
     private final UUID proximityUUID;
@@ -17,8 +17,8 @@ public class BeaconRegion implements  Parcelable {
 
     public BeaconRegion(String identifier, UUID proximityUUID, Integer major, Integer minor) {
         this.identifier = Preconditions.checkNotNull(identifier);
-       // Preconditions.checkArgument(!EstimoteBeacons.isSecureUUID(proximityUUID), "Invalid UUID (secure).");
-        this.proximityUUID =  Preconditions.checkNotNull(proximityUUID);
+        // Preconditions.checkArgument(!EstimoteBeacons.isSecureUUID(proximityUUID), "Invalid UUID (secure).");
+        this.proximityUUID = Preconditions.checkNotNull(proximityUUID);
         this.major = major;
         this.minor = minor;
     }
@@ -60,8 +60,10 @@ public class BeaconRegion implements  Parcelable {
 
         BeaconRegion beaconRegion = (BeaconRegion) o;
 
-        if (major != null ? !major.equals(beaconRegion.major) : beaconRegion.major != null) return false;
-        if (minor != null ? !minor.equals(beaconRegion.minor) : beaconRegion.minor != null) return false;
+        if (major != null ? !major.equals(beaconRegion.major) : beaconRegion.major != null)
+            return false;
+        if (minor != null ? !minor.equals(beaconRegion.minor) : beaconRegion.minor != null)
+            return false;
         if (proximityUUID != null ? !proximityUUID.equals(beaconRegion.proximityUUID) : beaconRegion.proximityUUID != null)
             return false;
 

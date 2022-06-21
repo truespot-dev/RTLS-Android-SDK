@@ -48,7 +48,7 @@ object BeaconAPI {
     }
 
     var DATE_FORMAT: SimpleDateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.US)
-    var GSON: Gson = GsonBuilder() .setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+    var GSON: Gson = GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
         .registerTypeAdapter(
             Date::class.java,
             JsonSerializer<Date> { date, type, context ->

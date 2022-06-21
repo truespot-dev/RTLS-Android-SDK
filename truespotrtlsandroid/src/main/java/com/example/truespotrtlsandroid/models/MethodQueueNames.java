@@ -3,7 +3,7 @@ package com.example.truespotrtlsandroid.models;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-public enum  MethodQueueNames implements Parcelable {
+public enum MethodQueueNames implements Parcelable {
     START_SCAN(1),
     STOP_SCAN(2),
     UPDATE_SCAN_TYPE_RULES(3),
