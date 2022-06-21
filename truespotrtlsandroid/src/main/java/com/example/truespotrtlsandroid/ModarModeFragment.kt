@@ -209,12 +209,14 @@ class ModarModeFragment(var mCurrentTag : String) :  BottomSheetDialogFragment()
 
                     if (!isSetProcess) {
                         mDeviceCount = 0
-                        AlertDialog.Builder(requireActivity())
-                            .setTitle(R.string.alert_title_tag)
-                            .setMessage(R.string.alert_title_tag_message)
-                            .setPositiveButton("OK") { _, _ ->
-                                initializeSetTagProcess()
-                            }.show()
+                        this@ModarModeFragment.activity?.let { it1 ->
+                            AlertDialog.Builder(it1)
+                                .setTitle(R.string.alert_title_tag)
+                                .setMessage(R.string.alert_title_tag_message)
+                                .setPositiveButton("OK") { _, _ ->
+                                    initializeSetTagProcess()
+                                }.show()
+                        }
                     }
                     else{
                         mDeviceCount = mDeviceCount.inc()
