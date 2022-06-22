@@ -3,7 +3,6 @@ package com.example.truespotrtlsandroid
 import android.app.Activity
 import android.app.Application
 import android.content.Context
-import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModelProvider
@@ -11,10 +10,7 @@ import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.observe
 import com.example.truespotrtlsandroid.models.Credentials
 import com.example.truespotrtlsandroid.models.PairRequestBody
-import com.example.truespotrtlsandroid.models.TSApplication
 import com.example.truespotrtlsandroid.models.TSDevice
-import rx.android.schedulers.AndroidSchedulers
-import rx.schedulers.Schedulers
 
 
 object BeaconServices {
