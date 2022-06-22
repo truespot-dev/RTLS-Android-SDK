@@ -113,6 +113,7 @@ object TSBeaconManagers {
                         //Update modar if Beacon changes
                         if (rssi != savedRSSI) {
 
+                           NotificationCenter.post(beaconRSSIUpdate, beacon)
                             //       NotificationCenter.default.post(name: Notification.Name(beaconRSSIUpdate), object: beacon)
                         }
                     }
