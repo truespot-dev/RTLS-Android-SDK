@@ -179,7 +179,7 @@ class TagBottomSheetFragment(var mSelectedDevice : String) : BottomSheetDialogFr
 
                             override fun onTagSelected(beacon: TSBeaconSighting?) {
                                 if (beacon != null) {
-                                    TrueSpot.launchTruedarModeTag(fragmentManager!!, beacon)
+                                    //TrueSpot.launchTruedarModeTag(fragmentManager!!, beacon)
                                 }
                             }
 

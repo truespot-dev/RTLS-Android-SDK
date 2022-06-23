@@ -81,10 +81,7 @@ class BeaconManagers(context: Context, activity: Activity) : ScanCallback() {
                         val getBeaconList = getBeaconSightings()
                         val getCurrentLocation = getCurrentLocation()
                         if (!getBeaconList.isNullOrEmpty() && getCurrentLocation != null) {
-                            TSBeaconManagers.initializeBeaconObserver(
-                                getBeaconList,
-                                getCurrentLocation
-                            )
+                            TSBeaconManagers.initializeBeaconObserver(mContext!!, getBeaconList, getCurrentLocation)
                         }
 
                         //break
