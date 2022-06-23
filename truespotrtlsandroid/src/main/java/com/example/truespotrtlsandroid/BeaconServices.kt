@@ -50,12 +50,9 @@ object BeaconServices {
                          locationManager =  TSLocationManager(context,activity)
                          locationManager!!.startScanning()*/
                         getAppinfo(viewModelStoreOwner, viewLifecycleOwner, context, activity)
-                        getTrackingDevices(
-                            viewModelStoreOwner,
-                            viewLifecycleOwner,
-                            context,
-                            activity
-                        )
+                        getTrackingDevices({devices, exception ->
+
+                        },viewModelStoreOwner,viewLifecycleOwner,context,activity)
                     } else {
                         AlertDialog.Builder(context)
                             .setTitle(R.string.error)
@@ -124,12 +121,7 @@ object BeaconServices {
     }
 
 
-    fun getTrackingDevices(
-        viewModelStoreOwner: ViewModelStoreOwner,
-        viewLifecycleOwner: LifecycleOwner,
-        context: Context,
-        activity: Activity
-    ) {
+    fun getTrackingDevices(completion: (devices: MutableList<TSDevice>, exception: Exception?) -> Unit,viewModelStoreOwner: ViewModelStoreOwner, viewLifecycleOwner: LifecycleOwner, context: Context, activity: Activity) {
         val beaconBaseServiceViewModel: BeaconBaseServiceViewModel = ViewModelProvider(
             viewModelStoreOwner,
             BeaconBaseServiceViewModelFactory(
@@ -145,6 +137,7 @@ object BeaconServices {
                 Status.SUCCESS -> {
                     val device = it.data
                     TSBeaconManagers.updateTrackingDevices(device)
+                    completion(device as MutableList<TSDevice>,it.message as Exception)
                 }
                 Status.LOADING -> {
                 }
@@ -162,8 +155,8 @@ object BeaconServices {
         viewModelStoreOwner: ViewModelStoreOwner,
         viewLifecycleOwner: LifecycleOwner,
         context: Context,
-        activity: Activity
-    ) {
+        activity: Activity,
+        completion: (devices: MutableList<TSDevice>, exception: Exception?) -> Unit) {
         val beaconBaseServiceViewModel: BeaconBaseServiceViewModel = ViewModelProvider(
             viewModelStoreOwner,
             BeaconBaseServiceViewModelFactory(
@@ -176,7 +169,8 @@ object BeaconServices {
         {
             when (it.status) {
                 Status.SUCCESS -> {
-
+                    val device = it.data
+                    completion(device as MutableList<TSDevice>,it.message as Exception)
                 }
                 Status.LOADING -> {
                 }

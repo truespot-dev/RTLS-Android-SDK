@@ -34,8 +34,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        TrueSpot.configure(application,this,this,applicationContext,this@MainActivity,
-            getString(R.string.tenantId),getString(R.string.secret),true)
+        TrueSpot.configure( getString(R.string.tenantId),getString(R.string.secret),true,application,this,this,applicationContext,this@MainActivity)
 
         trackingDeviceBtn = findViewById(R.id.trackingDevice)
         tagDeviceBtn = findViewById(R.id.tagDevice)
@@ -125,7 +124,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun getBeaconList()
     {
-        countDownTimer = object : CountDownTimer(30000, 2000), ClickHandler {
+        countDownTimer = object : CountDownTimer(30000, 2000) {
             override fun onTick(millisUntilFinished: Long) {
                 this@MainActivity!!.runOnUiThread {
                     // beaconManager = BeaconManagers(applicationContext,this@MainActivity)
@@ -159,11 +158,6 @@ class MainActivity : AppCompatActivity() {
             override fun onFinish() {
                 ///  TODO("Not yet implemented")
             }
-
-            override fun invoke(view: View, position: Int, type: Int) {
-                // TODO("Not yet implemented")
-            }
-
 
         }.start()
     }

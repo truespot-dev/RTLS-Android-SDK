@@ -1,20 +1,16 @@
 package com.example.truespotrtlsandroid
 
-import android.app.Notification
 import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.location.Location
 import android.util.Log
-import com.example.truespotrtlsandroid.BeaconAPI.GSON
-import com.example.truespotrtlsandroid.TSBeaconManagers.beaconRSSIUpdate
-import com.example.truespotrtlsandroid.TSBeaconManagers.mReceiver
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.example.truespotrtlsandroid.beacon.TSBeaconSighting
 import com.example.truespotrtlsandroid.models.TSDevice
 import com.google.gson.Gson
-import timber.log.Timber
 import java.util.*
-import java.util.stream.DoubleStream.builder
-import java.util.stream.IntStream.builder
-import java.util.stream.Stream.builder
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 
@@ -26,25 +22,33 @@ object TSBeaconManagers {
     private var timer: Timer? = null
     var mBeacons: HashMap<String, TSBeacon> = HashMap()
     var mTrackingDevices: HashMap<String, TSDevice> = HashMap()
-    var mReceiver: BroadcastReceiver? = null
     var stringBuilder: StringBuilder? = null
 
     init {
         stringBuilder = StringBuilder()
     }
+    fun observeBeaconRanged(listener: (beacons: MutableList<TSBeacon>)->Unit,context: Context): BroadcastReceiver {
+        val mBeaconsReceiver = object : BroadcastReceiver() {
+            override fun onReceive(context: Context?, intent: Intent?) {
+                listener.invoke(intent!!.getSerializableExtra(beaconDetected) as MutableList<TSBeacon> )
+            }
+        }
+        LocalBroadcastManager.getInstance(context).registerReceiver(mBeaconsReceiver, IntentFilter("notification"))
+        return mBeaconsReceiver
+    }
 
-
-    fun observeBeaconRanged(beaconMap: HashMap<String, TSBeacon>?): HashMap<String, TSBeacon>? {
-        return beaconMap
+    fun observeBeaconRSSI(context: Context,listener: (beacons: MutableList<TSBeacon>)->Unit): BroadcastReceiver {
+        val mBeaconRSSIReceiver = object : BroadcastReceiver() {
+            override fun onReceive(context: Context?, intent: Intent?) {
+                listener.invoke(intent!!.getSerializableExtra(beaconRSSIUpdate) as MutableList<TSBeacon> )
+            }
+        }
+        LocalBroadcastManager.getInstance(context).registerReceiver(mBeaconRSSIReceiver, IntentFilter("notification"))
+        return mBeaconRSSIReceiver
     }
 
 
-    fun observeBeaconRSSI(beacon: TSBeacon): String {
-        return beacon.beaconIdentifier
-    }
-
-
-    fun initializeBeaconObserver(
+    fun initializeBeaconObserver(mContext: Context,
         beaconUpdatedList: MutableList<TSBeaconSighting>,
         mCurrentLocation: Location
     ) {
@@ -57,41 +61,23 @@ object TSBeaconManagers {
                 "currentlocation-->",
                 "lat: ${mCurrentLocation.latitude},log:${mCurrentLocation.longitude}"
             )
-          /*   val currentLocation : CLLocation? = null
-            currentLocation?.coordinate?.latitude = mCurrentLocation.latitude.toString()
-            currentLocation?.coordinate?.longitude = mCurrentLocation.longitude.toString()
-            currentLocation?.horizontalAccuracy = mCurrentLocation.accuracy.toString()*/
             process(
                 beaconUpdatedList,
                 CLLocation(
                     Coordinate(
                         mCurrentLocation.latitude.toString(),
-                        mCurrentLocation.longitude.toString()
-                    ), mCurrentLocation.accuracy.toString()
-                )
-            )
+                        mCurrentLocation.longitude.toString()), mCurrentLocation.accuracy.toString())
+                       , mContext)
         }
 
     }
 
 
-    private fun process(beacons: List<TSBeaconSighting>, currentLocation: CLLocation?) {
+    private fun process(beacons: List<TSBeaconSighting>, currentLocation: CLLocation?,mContext: Context) {
         for (TSBeaconSighting in beacons) {
             val beacon = TSBeacon(TSBeaconSighting, currentLocation)
             beacon.proximity = TSBeaconSighting.proximity
             var key = stringBuilder?.let { getKey(it, beacon) }
-            /* if (key != null) {
-                 Log.i(
-                     "savedBeacon",
-                     "Get:${Gson().toJson(mBeacons!!.get(key))}--->Key${Gson().toJson(mBeacons!![key])}"
-                 )
-                 var sighting = mBeacons.get(key)
-                 if (sighting == null) {
-                     mBeacons.put(key, beacon)
-                 } else {
-                     sighting.update(beacon)
-                 }
-             }*/
             var savedBeacon: TSBeacon? = null
             if (mBeacons[key] != null) {
                 savedBeacon = mBeacons[key]
@@ -112,9 +98,9 @@ object TSBeaconManagers {
                         }
                         //Update modar if Beacon changes
                         if (rssi != savedRSSI) {
-
-                           NotificationCenter.post(beaconRSSIUpdate, beacon)
-                            //       NotificationCenter.default.post(name: Notification.Name(beaconRSSIUpdate), object: beacon)
+                            val intent = Intent("notification")
+                            intent.putExtra(beaconRSSIUpdate, mBeacons)
+                            LocalBroadcastManager.getInstance(mContext).sendBroadcast(intent)
                         }
                     }
                 }
@@ -128,7 +114,9 @@ object TSBeaconManagers {
                         mBeacons.put(key, beacon)
                     }
                     //RSSI update for Modar Mode
-                    // NotificationCenter.default.post(name: Notification.Name(beaconRSSIUpdate), object: beacon)
+                    val intent = Intent("notification")
+                    intent.putExtra(beaconRSSIUpdate, mBeacons)
+                    LocalBroadcastManager.getInstance(mContext).sendBroadcast(intent)
                 } else {
                     var sighting = mBeacons.get(key)
                     if (sighting == null) {
@@ -140,7 +128,9 @@ object TSBeaconManagers {
                     }
                 }
             }
-            observeBeaconRanged(getBeaconWithIdentifiers())
+            val intent = Intent("notification")
+            intent.putExtra(beaconDetected, getBeaconWithIdentifiers())
+            LocalBroadcastManager.getInstance(mContext).sendBroadcast(intent)
         }
 
 

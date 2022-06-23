@@ -2,18 +2,17 @@ package com.example.truespotrtlsandroid
 
 import android.app.Activity
 import android.app.Application
+import android.content.BroadcastReceiver
 import android.content.Context
-import android.widget.Toast
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModelStoreOwner
-import com.example.truespotrtlsandroid.TrueSpot.requestLocationPermission
-import com.example.truespotrtlsandroid.TrueSpot.startScanning
-import com.example.truespotrtlsandroid.beacon.TSBeaconSighting
 import com.example.truespotrtlsandroid.models.Credentials
 import com.example.truespotrtlsandroid.models.PairRequestBody
 import com.example.truespotrtlsandroid.models.TSDevice
-import timber.log.Timber
+import java.util.*
+import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
 
 object TrueSpot {
 
@@ -79,31 +78,24 @@ object TrueSpot {
     fun launchTruedarMode(supportFragmentManager: FragmentManager, device: TSDevice) {
         val bottomSheetFragment = ModarModeFragment(device.tagIdentifier)
         bottomSheetFragment.show(supportFragmentManager, ModarModeFragment.TAG)
+
     }
+
 
 
     /// Use this function to get notified of nearby beacons. One use case if for detecting beacons for pairing.
     /// - Parameter completion: completion handler everytime a beacon is detected
-    /// - Returns: NSObjectProtocol Observable pattern
-    fun observeBeaconRanged(beacon: HashMap<String, TSBeacon>?): HashMap<String, TSBeacon>? {
-        return TSBeaconManagers.observeBeaconRanged(beacon)
+    /// - Returns: BroadcastReceiver Receiver the intent
+   fun observeBeaconRanged(listener: (beacons: MutableList<TSBeacon>)-> Unit,context: Context): BroadcastReceiver
+    {
+        return TSBeaconManagers.observeBeaconRanged(listener,context)
     }
-
 
     /// Get list of tracking devices for per your appID
     /// - Parameter completion: callback with a list of TSDevice
-    fun getTrackingDevices(
-        viewModelStoreOwner: ViewModelStoreOwner,
-        viewLifecycleOwner: LifecycleOwner,
-        context: Context,
-        activity: Activity
-    ) {
-        BeaconServices.getTrackingDevices(
-            viewModelStoreOwner,
-            viewLifecycleOwner,
-            context,
-            activity
-        )
+    fun getTrackingDevices(completion: (devices: MutableList<TSDevice>, exception: Exception?) -> Unit,viewModelStoreOwner: ViewModelStoreOwner, viewLifecycleOwner: LifecycleOwner, context: Context, activity: Activity)
+    {
+        BeaconServices.getTrackingDevices(completion,viewModelStoreOwner, viewLifecycleOwner, context, activity)
     }
 
 
@@ -113,23 +105,14 @@ object TrueSpot {
     ///   - assetType: the type of asset
     ///   - tagId: the tagId
     ///   - completion: callback for if the paring was successful or not.
-    fun pair(
-        assetIdentifier: String,
-        assetType: String,
-        tagId: String,
-        viewModelStoreOwner: ViewModelStoreOwner,
-        viewLifecycleOwner: LifecycleOwner,
-        context: Context,
-        activity: Activity
-    ) {
+    fun pair(assetIdentifier: String, assetType: String, tagId: String, viewModelStoreOwner: ViewModelStoreOwner, viewLifecycleOwner: LifecycleOwner, context: Context, activity: Activity,completion: (devices: MutableList<TSDevice>, exception: Exception?) -> Unit) {
         BeaconServices.pair(
             PairRequestBody(assetIdentifier, assetType),
             tagId,
             viewModelStoreOwner,
             viewLifecycleOwner,
             context,
-            activity
-        )
+            activity,completion)
     }
 
 
