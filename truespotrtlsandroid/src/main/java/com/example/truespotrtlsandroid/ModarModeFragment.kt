@@ -35,21 +35,14 @@ class ModarModeFragment(var mCurrentTag : String) :  BottomSheetDialogFragment()
 
     var isSetProcess = false
     var isBeepSound = false
-
     var countDownTimer : CountDownTimer? = null
     var mMediaPlayer: MediaPlayer? = null
     var lastSeenDate : Date? = null
-    val mBundle = Bundle()
     var mDeviceCount = 0
-    var arrayList : ArrayList<String> = ArrayList()
     var jsonObject = JsonObject()
     var gson = Gson()
     var mHandler = Handler(Looper.getMainLooper())
-    var mUpperRange = -30
-    var handler: Handler = Handler(Looper.getMainLooper())
-    var runnable: Runnable? = null
-    var delay = 5000
-    var _binding: FragmentModarModeBinding? = null
+    private var _binding: FragmentModarModeBinding? = null
     val binding get() = _binding!!
     private var previousRSSIValue = 0
     var farRSSILocationDictionary: MutableList<ItemDistance> = ArrayList()
@@ -125,7 +118,6 @@ class ModarModeFragment(var mCurrentTag : String) :  BottomSheetDialogFragment()
                 countDownTimer!!.cancel()
                 countDownTimer = null
             }
-            //mCommonCallBack.upDateData("find_tag_close")
         }
 
         calculatTagLocation()
@@ -156,7 +148,6 @@ class ModarModeFragment(var mCurrentTag : String) :  BottomSheetDialogFragment()
               val result : Collection<TSBeacon> = TSBeaconManagers.getBeaconWithIdentifiers()!!.values
                 Log.i("findTag","--->${Gson().toJson(result)}")
                 if (result != null) {
-                    //val result: List<MoLoCarBeaconSighting> = beaconManager!!.beaconSightings
                     var tempData : TSBeacon? = null
                     for (data : TSBeacon in result) {
                         if (mCurrentTag.equals(data.getBeaconIdentifier())) {
@@ -231,7 +222,6 @@ class ModarModeFragment(var mCurrentTag : String) :  BottomSheetDialogFragment()
     }
 
     private fun playSound() {
-        // Log.e("status","check Update-----> $isBeepSound")
         mMediaPlayer = MediaPlayer.create(requireContext(), R.raw.hollow)
         mMediaPlayer!!.start()
 
@@ -303,8 +293,6 @@ class ModarModeFragment(var mCurrentTag : String) :  BottomSheetDialogFragment()
             } else {
                 percentage = ((range * -1) * 0.01)
             }
-            //  percentage = ((range * -1) * 0.01)
-            // Log.e("percentage:",percentage.toString()+"range:"+range)
             val marHeigt = (totalHeight * percentage)
             Log.e("marHeigt:", marHeigt.toString())
             val marginTop = totalHeight - marHeigt
@@ -325,11 +313,8 @@ class ModarModeFragment(var mCurrentTag : String) :  BottomSheetDialogFragment()
             }
             var date = lastSeenDate
             val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
-           // DisplayUtil.setText(binding.tvLastseen, "Last Seen: " + getUpdated(sdf.format(date).toString()))
             binding.tvLastseen.text = "Last Seen: " + getUpdated(sdf.format(date).toString())
             lastSeenDate = Date()
-           // mCommonCallBack.upDateData("find_tag")
-
         }
 
 
@@ -338,14 +323,11 @@ class ModarModeFragment(var mCurrentTag : String) :  BottomSheetDialogFragment()
     private fun getUpdated(updated : String): String? {
         var convTime: String? = null
         val suffix = "ago"
-        // val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ", Locale.US)
         val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
 
         try {
-            // val date = format.parse(updated.replace("Z","+0000"))
             val date = format.parse(updated)
             val timeZone = Calendar.getInstance().timeZone.id
-            // val local = Date(date.time + TimeZone.getTimeZone(timeZone).getOffset(date.time))
             val local = Date(date.time)
             val nowTime = Date()
             val dateDiff = nowTime.time - local.time
@@ -431,35 +413,7 @@ class ModarModeFragment(var mCurrentTag : String) :  BottomSheetDialogFragment()
         countDownTimer!!.start()
         binding.progressIndicator.visibility = View.VISIBLE
         binding.tvNearSearch.visibility = View.VISIBLE
-      /*  if (beaconManager!!.beaconSightings != null) {
-            // Take a snapshot
-            val result: List<MoLoCarBeaconSighting> = beaconManager!!.beaconSightings
-            var tempData : MoLoCarBeaconSighting? = null
 
-            for (data : MoLoCarBeaconSighting in result) {
-                if (mCurrentMoloTags.beaconIdentifier.equals(data.beaconId)) {
-                    tempData = data
-                    break
-                }
-
-            }
-
-
-            if (tempData != null) {
-                if(previousRSSIValue != tempData.rssi)
-                {
-                    setProgress(tempData.rssi)
-                    previousRSSIValue = tempData.rssi
-                    binding.pairedTag.visibility = View.VISIBLE
-                    binding.pairedTag.setText(tempData?.rssi.toString()+"\nrssi")
-                    binding.progressIndicator.visibility = View.GONE
-                    binding.tvNearSearch.visibility = View.GONE
-                    if (isBeepSound) stopSound() else playSound()
-                    mHandler.removeCallbacksAndMessages(null)
-                }
-            }
-
-        }*/
     }
 
 

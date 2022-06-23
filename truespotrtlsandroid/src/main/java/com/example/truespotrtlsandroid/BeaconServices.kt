@@ -17,75 +17,39 @@ object BeaconServices {
 
     var locationManager: TSLocationManager? = null
 
-    fun authenticate(
-        viewModelStoreOwner: ViewModelStoreOwner,
-        viewLifecycleOwner: LifecycleOwner,
-        context: Context,
-        activity: Activity,
-        application: Application
-    ) {
-        val beaconServiceViewModel: BeaconServiceViewModel = ViewModelProvider(
-            viewModelStoreOwner,
+    fun authenticate(viewModelStoreOwner: ViewModelStoreOwner,viewLifecycleOwner: LifecycleOwner, context: Context, activity: Activity, application: Application) {
+        val beaconServiceViewModel: BeaconServiceViewModel = ViewModelProvider(viewModelStoreOwner,
             BeaconServiceViewModelFactory(
                 activity.application,
-                ApiHelper(RetrofitBuilder.apiAuthService)
-            )
-        )
+                ApiHelper(RetrofitBuilder.apiAuthService)))
             .get(BeaconServiceViewModel::class.java)
 
-        beaconServiceViewModel.authenticate(Credentials.tenantId).observe(viewLifecycleOwner)
-        {
+        beaconServiceViewModel.authenticate(Credentials.tenantId).observe(viewLifecycleOwner) {
             when (it.status) {
                 Status.SUCCESS -> {
                     if (it.data != null) {
                         val result = it.data
                         Credentials.jwt = result.jwt
-                        /* var appInfo = TSApplication()
-                         appInfo.id = "620c3bf2f840f63c650eca3a"
-                         appInfo.description = ""
-                         appInfo.name ="Ikon"
-                         appInfo.uuids = arrayOf("5c38dbde-567c-4cca-b1da-40a8ad465656")
-                         Credentials.appInfo = appInfo
-
-                         locationManager =  TSLocationManager(context,activity)
-                         locationManager!!.startScanning()*/
                         getAppinfo(viewModelStoreOwner, viewLifecycleOwner, context, activity)
                         getTrackingDevices({devices, exception ->
 
                         },viewModelStoreOwner,viewLifecycleOwner,context,activity)
-                    } else {
-                        AlertDialog.Builder(context)
-                            .setTitle(R.string.error)
-                            .setMessage(it.message)
-                            .setPositiveButton("OK", null).show()
                     }
-
                 }
                 Status.LOADING -> {
                 }
                 Status.ERROR -> {
-                    AlertDialog.Builder(context)
-                        .setTitle(R.string.error)
-                        .setMessage(it.message)
-                        .setPositiveButton("OK", null).show()
+
                 }
             }
         }
     }
 
-    fun getAppinfo(
-        viewModelStoreOwner: ViewModelStoreOwner,
-        viewLifecycleOwner: LifecycleOwner,
-        context: Context,
-        activity: Activity
-    ) {
-        val beaconBaseServiceViewModel: BeaconBaseServiceViewModel = ViewModelProvider(
-            viewModelStoreOwner,
+    fun getAppinfo(viewModelStoreOwner: ViewModelStoreOwner, viewLifecycleOwner: LifecycleOwner, context: Context, activity: Activity) {
+        val beaconBaseServiceViewModel: BeaconBaseServiceViewModel = ViewModelProvider(viewModelStoreOwner,
             BeaconBaseServiceViewModelFactory(
                 activity.application,
-                BaseApiHelper(BaseRetrofitBuilder.apiBaseService)
-            )
-        )
+                BaseApiHelper(BaseRetrofitBuilder.apiBaseService)))
             .get(BeaconBaseServiceViewModel::class.java)
 
 
@@ -98,21 +62,11 @@ object BeaconServices {
                         locationManager = TSLocationManager(context, activity)
                         locationManager?.startScanning()
 
-                    } else {
-                        AlertDialog.Builder(context)
-                            .setTitle(R.string.error)
-                            .setMessage(it.message)
-                            .setPositiveButton("OK", null).show()
                     }
-
                 }
                 Status.LOADING -> {
                 }
                 Status.ERROR -> {
-                    AlertDialog.Builder(context)
-                        .setTitle(R.string.error)
-                        .setMessage(it.message)
-                        .setPositiveButton("OK", null).show()
                 }
             }
         }
@@ -120,19 +74,14 @@ object BeaconServices {
 
     }
 
-
     fun getTrackingDevices(completion: (devices: MutableList<TSDevice>, exception: Exception?) -> Unit,viewModelStoreOwner: ViewModelStoreOwner, viewLifecycleOwner: LifecycleOwner, context: Context, activity: Activity) {
-        val beaconBaseServiceViewModel: BeaconBaseServiceViewModel = ViewModelProvider(
-            viewModelStoreOwner,
+        val beaconBaseServiceViewModel: BeaconBaseServiceViewModel = ViewModelProvider(viewModelStoreOwner,
             BeaconBaseServiceViewModelFactory(
                 activity.application,
-                BaseApiHelper(BaseRetrofitBuilder.apiBaseService)
-            )
-        )
+                BaseApiHelper(BaseRetrofitBuilder.apiBaseService)))
             .get(BeaconBaseServiceViewModel::class.java)
 
-        beaconBaseServiceViewModel.getTrackingDevices().observe(viewLifecycleOwner)
-        {
+        beaconBaseServiceViewModel.getTrackingDevices().observe(viewLifecycleOwner) {
             when (it.status) {
                 Status.SUCCESS -> {
                     val device = it.data
@@ -149,24 +98,13 @@ object BeaconServices {
         }
     }
 
-    fun pair(
-        pairRequestBody: PairRequestBody?,
-        tagID: String,
-        viewModelStoreOwner: ViewModelStoreOwner,
-        viewLifecycleOwner: LifecycleOwner,
-        context: Context,
-        activity: Activity,
-        completion: (devices: MutableList<TSDevice>, exception: Exception?) -> Unit) {
-        val beaconBaseServiceViewModel: BeaconBaseServiceViewModel = ViewModelProvider(
-            viewModelStoreOwner,
+    fun pair(pairRequestBody: PairRequestBody?, tagID: String, viewModelStoreOwner: ViewModelStoreOwner, viewLifecycleOwner: LifecycleOwner, context: Context, activity: Activity, completion: (devices: MutableList<TSDevice>, exception: Exception?) -> Unit) {
+        val beaconBaseServiceViewModel: BeaconBaseServiceViewModel = ViewModelProvider(viewModelStoreOwner,
             BeaconBaseServiceViewModelFactory(
                 activity.application,
-                BaseApiHelper(BaseRetrofitBuilder.apiBaseService)
-            )
-        )
+                BaseApiHelper(BaseRetrofitBuilder.apiBaseService)))
             .get(BeaconBaseServiceViewModel::class.java)
-        beaconBaseServiceViewModel.pair(pairRequestBody, tagID).observe(viewLifecycleOwner)
-        {
+        beaconBaseServiceViewModel.pair(pairRequestBody, tagID).observe(viewLifecycleOwner) {
             when (it.status) {
                 Status.SUCCESS -> {
                     val device = it.data

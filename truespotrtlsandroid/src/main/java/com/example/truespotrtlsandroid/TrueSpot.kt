@@ -16,41 +16,22 @@ import kotlin.collections.HashMap
 
 object TrueSpot {
 
-    //var shared = TrueSpot()
-    // test
     /// Debug mode flag. Keep this off for production. Only for debugging purposes.
     var isDebugMode = false
 
     init {
     }
 
-
     /// Configure is the entry point to initializing the SDK.
     /// - Parameters:
     ///   - tenatId: the tenantId for your organization - will be provided for your organization
     ///   - clientSecret: client secret - will be provided for your organization
     ///   - isDebugMode: If turn on, you can see logs as you use the SDK,
-    fun configure(
-        tenantId: String,
-        clientSecret: String,
-        isDebugMode: Boolean,
-        application: Application,
-        viewModelStoreOwner: ViewModelStoreOwner,
-        viewLifecycleOwner: LifecycleOwner,
-        context: Context,
-        activity: Activity,
-    ) {
+    fun configure(tenantId: String,clientSecret: String,isDebugMode: Boolean,application: Application,viewModelStoreOwner: ViewModelStoreOwner, viewLifecycleOwner: LifecycleOwner, context: Context, activity: Activity, ) {
         TrueSpot.isDebugMode = isDebugMode
         Credentials.tenantId = tenantId
         Credentials.clientSecret = clientSecret
-        BeaconServices.authenticate(
-            viewModelStoreOwner,
-            viewLifecycleOwner,
-            context,
-            activity,
-            application
-        )
-
+        BeaconServices.authenticate(viewModelStoreOwner, viewLifecycleOwner, context, activity, application)
     }
 
     /// In order to get access device location, apple requires us to ask the user permission. Call this function when you need to request permission to the user
@@ -61,10 +42,8 @@ object TrueSpot {
 
     /// Upon initializing the SDK, the SDK will internally call start scanning. This is for the purpose scanning beacons. You can call this function counterpart stopScanning() if you no longer want to scan.
     fun startScanning(context: Context, activity: Activity) {
-
         TSLocationManager(context, activity).startScanning()
     }
-
 
     /// Call this function when you no longer want scan for beacons
     fun stopScanning(context: Context, activity: Activity) {
@@ -80,8 +59,6 @@ object TrueSpot {
         bottomSheetFragment.show(supportFragmentManager, ModarModeFragment.TAG)
 
     }
-
-
 
     /// Use this function to get notified of nearby beacons. One use case if for detecting beacons for pairing.
     /// - Parameter completion: completion handler everytime a beacon is detected
@@ -106,13 +83,7 @@ object TrueSpot {
     ///   - tagId: the tagId
     ///   - completion: callback for if the paring was successful or not.
     fun pair(assetIdentifier: String, assetType: String, tagId: String, viewModelStoreOwner: ViewModelStoreOwner, viewLifecycleOwner: LifecycleOwner, context: Context, activity: Activity,completion: (devices: MutableList<TSDevice>, exception: Exception?) -> Unit) {
-        BeaconServices.pair(
-            PairRequestBody(assetIdentifier, assetType),
-            tagId,
-            viewModelStoreOwner,
-            viewLifecycleOwner,
-            context,
-            activity,completion)
+        BeaconServices.pair(PairRequestBody(assetIdentifier, assetType), tagId, viewModelStoreOwner, viewLifecycleOwner, context, activity,completion)
     }
 
 

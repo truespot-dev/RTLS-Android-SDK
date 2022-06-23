@@ -83,13 +83,9 @@ class BeaconManagers(context: Context, activity: Activity) : ScanCallback() {
                         if (!getBeaconList.isNullOrEmpty() && getCurrentLocation != null) {
                             TSBeaconManagers.initializeBeaconObserver(mContext!!, getBeaconList, getCurrentLocation)
                         }
-
-                        //break
                     }
                 }
                 if (!beaconUpdatedList!!.isNullOrEmpty()) {
-                    // var index = 0
-                    //  var beaconUpdatedRSSIList : MutableList<TSBeaconSighting>? = ArrayList()
                     beaconList.forEach { result ->
                         beaconUpdatedList?.forEach {
                             if (!beaconUpdatedList!!.contains(it)) {
@@ -102,26 +98,11 @@ class BeaconManagers(context: Context, activity: Activity) : ScanCallback() {
                                     }
                                 }
                             }
-
-                            //index++
                         }
-
-                        /*val listIterator2 = beaconUpdatedList?.iterator()
-                        while (listIterator2?.hasNext() == true) {
-                            val tmp = listIterator2.next()
-                            if(tmp.beaconId.equals(result.beaconId))
-                            {
-                                   beaconUpdatedList!!.remove(result)
-                                   beaconUpdatedList!!.add(result)
-                            }
-                        }*/
                     }
-
-
                 }
             }
             Log.i("Log", "beaconList-->${Gson().toJson(beaconUpdatedList)}")
-            //Log.i("Log", "onScanResult--->${IBeacon(beacon).major},${IBeacon(beacon).minor}")
         }
     }
 
@@ -136,30 +117,13 @@ class BeaconManagers(context: Context, activity: Activity) : ScanCallback() {
     }
 
     fun startMonitoring() {
-        //val filters: ArrayList<ScanFilter> = ArrayList<ScanFilter>()
-        //val uuid = UUID.randomUUID()
-        /* val uuid = "U5C38DBDE567C4CCAB1DA40A8AD465656"
-         val filter: ScanFilter = ScanFilter.Builder().setServiceUuid(ParcelUuid(UUID.fromString(uuid))).build()
-         filters.add(filter)*/
-        /*val uuid = "U5C38DBDE567C4CCAB1DA40A8AD465656"
-        val yanService = ParcelUuid(UUID.fromString(uuid))
         val filters: ArrayList<ScanFilter> = ArrayList<ScanFilter>()
-        filters.add(ScanFilter.Builder().setServiceUuid(yanService).build())*/
-        val filters: ArrayList<ScanFilter> = ArrayList<ScanFilter>()
-        //  filters.add(ScanFilter.Builder().setServiceUuid(ParcelUuid(UUID.fromString("5C38DBDE-567C-4CCA-B1DA-40A8AD465656"))).build())
         val settings: ScanSettings = ScanSettings.Builder()
             .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY)
             .build()
-
-
         btScanner = btAdapter?.getBluetoothLeScanner()
         btScanner?.startScan(null, settings, this)
         scanning = true
-        /* val handle = Handler()
-         handle.postDelayed(Runnable { stopMonitoring() }, 10000)
- */
-
-
     }
 
     fun stopMonitoring() {
@@ -229,27 +193,7 @@ class BeaconManagers(context: Context, activity: Activity) : ScanCallback() {
         return result
     }
 
-
-    /* private fun getLastKnownLocation(): Location? {
-
-         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(mContext!!)
-         if (checkRequiredPermission(Manifest.permission.ACCESS_FINE_LOCATION,mContext!!)!!) {
-                 val lm : LocationManager = mContext!!.getSystemService(Context.LOCATION_SERVICE) as LocationManager
-               //  location = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
-
-             val providers : List<String> = lm.getProviders(true)
-                 for (provider in providers) {
-                     location = lm.getLastKnownLocation(provider)
-                     if (location != null) {
-                         break
-                     }
-                 }
-             }
-         return location
-     }*/
-
-
-    private fun getCurrentLocation(): Location? {
+       private fun getCurrentLocation(): Location? {
         fusedLocationProviderClient = mActivity?.let {
             LocationServices.getFusedLocationProviderClient(
                 it

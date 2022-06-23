@@ -111,28 +111,6 @@ class LocationManagers(context: Context, activity: Activity) : BaseLifeCycleObje
     }
 
 
-    /* var startRunnableLocationUpdates = Runnable {
-         BatteryOptimizationUtil.readBatteryMode(context)
-         Log.e(
-             "startLocationUpdates",
-             "Started for: " + BatteryOptimizationUtil.BEACON_SCANNING_PERIOD_MILLIS
-         )
-         startLocationUpdates()
-         handlerLocation!!.postDelayed(stopRunnableLocationUpdates,BatteryOptimizationUtil.BEACON_SCANNING_PERIOD_MILLIS)
-     }*/
-
-    /* var stopRunnableLocationUpdates = Runnable {
-         BatteryOptimizationUtil.readBatteryMode(context)
-         Log.e(
-             "stopLocationUpdates",
-             "Stopped for: " + BatteryOptimizationUtil.BEACON_SCANNING_STOP_PERIOD_MILLIS
-         )
-         stopLocationUpdates()
-         handlerLocation!!.postDelayed(startRunnableLocationUpdates,BatteryOptimizationUtil.BEACON_SCANNING_STOP_PERIOD_MILLIS)
-     }
- */
-
-
     fun startLocationUpdates() {
         if (!subscribedForLocationUpdates) {
             val hasPermission = context?.let {

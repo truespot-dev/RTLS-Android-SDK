@@ -64,32 +64,6 @@ public class CLLocationManager extends BaseLifeCycleObject {
         handler = new Handler();
         handlerLocation = new Handler();
         mLogBuilder = new StringBuilder();
-/*
-
-        locationRequest = new LocationRequest();
-        locationRequest.setInterval(Constant.Location.LOCATION_REQUEST_INTERVAL_MILLIS);
-//        locationRequest.setFastestInterval(Constants.Location.LOCATION_REQUEST_FASTEST_INTERVAL_MILLIS);
-        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-
-        // No need to check whether the Location services is enabled.
-        // Even if it is disabled, when user changes setting, we will start receiving location
-        // updates.
-        //if (LocationUtil.isLocationEnabled(context)) {
-        int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(context);
-        if (resultCode == ConnectionResult.SUCCESS) {
-            googleApiClient = new GoogleApiClient.Builder(context).addApi(LocationServices.API).addConnectionCallbacks(listener).build();
-            googleApiClient.connect();
-        } else {
-
-            //GooglePlayServicesUtil.getErrorDialog();
-            Timber.e("PlayServices Not Available");
-        }
-//        } else {
-//
-//            Timber.e("Location mode is disabled");
-//        }
-
-*/
 
         if (checkRequiredPermission(Manifest.permission.ACCESS_FINE_LOCATION)) {
             // Permission Enable

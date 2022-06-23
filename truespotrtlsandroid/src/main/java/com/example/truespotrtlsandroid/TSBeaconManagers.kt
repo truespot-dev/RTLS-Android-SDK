@@ -15,14 +15,11 @@ import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 
 object TSBeaconManagers {
-    private val shared = TSBeaconManagers
-    private val beaconDetected = "beaconDetected"
-    private val beaconRSSIUpdate = "beaconRSSIUpdate"
-    var isGettingIdentifiers = false
-    private var timer: Timer? = null
+    private const val beaconDetected = "beaconDetected"
+    private const val beaconRSSIUpdate = "beaconRSSIUpdate"
     var mBeacons: HashMap<String, TSBeacon> = HashMap()
     var mTrackingDevices: HashMap<String, TSDevice> = HashMap()
-    var stringBuilder: StringBuilder? = null
+    private var stringBuilder: StringBuilder? = null
 
     init {
         stringBuilder = StringBuilder()
@@ -48,26 +45,12 @@ object TSBeaconManagers {
     }
 
 
-    fun initializeBeaconObserver(mContext: Context,
-        beaconUpdatedList: MutableList<TSBeaconSighting>,
-        mCurrentLocation: Location
-    ) {
-        Log.e("init", "----")
+    fun initializeBeaconObserver(mContext: Context, beaconUpdatedList: MutableList<TSBeaconSighting>, mCurrentLocation: Location) {
         if (!beaconUpdatedList.isNullOrEmpty()) {
             for (beacons in beaconUpdatedList) {
-                Log.e("init--", beacons.beaconId)
+
             }
-            Log.e(
-                "currentlocation-->",
-                "lat: ${mCurrentLocation.latitude},log:${mCurrentLocation.longitude}"
-            )
-            process(
-                beaconUpdatedList,
-                CLLocation(
-                    Coordinate(
-                        mCurrentLocation.latitude.toString(),
-                        mCurrentLocation.longitude.toString()), mCurrentLocation.accuracy.toString())
-                       , mContext)
+            process(beaconUpdatedList, CLLocation(Coordinate(mCurrentLocation.latitude.toString(), mCurrentLocation.longitude.toString()), mCurrentLocation.accuracy.toString()), mContext)
         }
 
     }
@@ -93,7 +76,6 @@ object TSBeaconManagers {
 
                     if (rssi != 0) {
                         if (rssi >= savedRSSI) {
-//                            mBeacons[key] = beacon
                             mBeacons?.set(key.toString(),beacon)
                         }
                         //Update modar if Beacon changes
@@ -193,7 +175,6 @@ object TSBeaconManagers {
                 mBeacons[key] = value
             }
         }
-
         return beacons
     }
 
@@ -201,19 +182,9 @@ object TSBeaconManagers {
     fun updateTrackingDevices(devices: ArrayList<TSDevice>?) {
         devices?.forEach {
             val key = stringBuilder?.let { it1 -> getKey(it1, it) }
-//            mTrackingDevices[key] = it
             mTrackingDevices?.set(key.toString(),it)
 
         }
-        Log.i("trackingDevice", "-->${Gson().toJson(mTrackingDevices)}")
-        /* val itr = devices!!.keys.iterator()
-         while (itr.hasNext()) {
-             val key = itr.next()
-
-             val value = devices[key]
-             val keys = getKey(stringBuilder!!,value!!)
-             mTrackingDevices.put(keys,value)
-         }*/
     }
 
 }
