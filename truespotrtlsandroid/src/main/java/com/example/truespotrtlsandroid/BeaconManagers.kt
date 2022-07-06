@@ -48,7 +48,6 @@ class BeaconManagers(context: Context, activity: Activity) : ScanCallback() {
         btScanner = btAdapter?.bluetoothLeScanner
         if (btAdapter != null && !btAdapter!!.isEnabled)
             scanning = false
-        //test
 
     }
 
