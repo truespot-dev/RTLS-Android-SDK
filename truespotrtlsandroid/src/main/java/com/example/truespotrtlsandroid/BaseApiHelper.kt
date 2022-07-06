@@ -7,4 +7,6 @@ class BaseApiHelper(private val beaconBaseAPIServices: BeaconBaseAPIServices) {
     suspend fun getTrackingDevices() = beaconBaseAPIServices.getTrackingDevices()
     suspend fun pair(pairRequestBody: PairRequestBody?, tagId: String) =
         beaconBaseAPIServices.pair(pairRequestBody, tagId)
+    suspend fun unpair(deviceID: String, pairingId: String) =
+        beaconBaseAPIServices.unpair(deviceID, pairingId)
 }

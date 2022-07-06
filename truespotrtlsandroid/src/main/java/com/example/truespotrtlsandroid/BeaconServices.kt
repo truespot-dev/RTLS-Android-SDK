@@ -3,6 +3,7 @@ package com.example.truespotrtlsandroid
 import android.app.Activity
 import android.app.Application
 import android.content.Context
+import android.widget.Switch
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModelProvider
@@ -61,7 +62,6 @@ object BeaconServices {
                         Credentials.appInfo = result
                         locationManager = TSLocationManager(context, activity)
                         locationManager?.startScanning()
-
                     }
                 }
                 Status.LOADING -> {
@@ -118,21 +118,49 @@ object BeaconServices {
         }
     }
 
+    fun unpair(deviceID: String, pairingId: String, viewModelStoreOwner: ViewModelStoreOwner, viewLifecycleOwner: LifecycleOwner, context: Context, activity: Activity,completion: (exception: Exception?) -> Unit) {
+        val beaconBaseServiceViewModel: BeaconBaseServiceViewModel = ViewModelProvider(viewModelStoreOwner,
+            BeaconBaseServiceViewModelFactory(
+                activity.application,
+                BaseApiHelper(BaseRetrofitBuilder.apiBaseService)))
+            .get(BeaconBaseServiceViewModel::class.java)
+        beaconBaseServiceViewModel.unpair(deviceID, pairingId).observe(viewLifecycleOwner) {
+            when (it.status) {
+                Status.SUCCESS -> {
+                    completion(it.message as Exception)
+                }
+                Status.LOADING -> {
+                }
+                Status.ERROR -> {
+                }
+            }
+        }
+    }
+
+
+
 
 }
 
+enum class TSEnvironment{
+    dev,
+    prod
+
+}
+
+
 object API {
-    //DEV
-    val authURL = "https://authprovider-d-us-c-api.azurewebsites.net"
 
-    //PROD
-    // val authURL = "https://auth.truespot.com/"
+    var  environment: TSEnvironment = TSEnvironment.dev
+    val authURL = when(environment){
+        TSEnvironment.dev -> "https://authprovider-d-us-c-api.azurewebsites.net"
+        TSEnvironment.prod -> "https://auth.truespot.com"
+    }
 
-    //DEV
-    val RTLSBaseURL = "https://rtls-d-us-c-api.azurewebsites.net"
-
-    //PROD
-    //  val RTLSBaseURL = "https://rtls.truespot.com/"
+    val RTLSBaseURL = when(environment){
+        TSEnvironment.dev -> "https://rtls-d-us-c-api.azurewebsites.net"
+        TSEnvironment.prod -> "https://rtls.truespot.com"
+    }
 
     object Endpoint {
         const val authorization = "api/api-authorizations"

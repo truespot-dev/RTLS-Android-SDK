@@ -1,12 +1,16 @@
 package com.example.truespotrtlsandroid
 
 import android.app.Activity
+import android.content.BroadcastReceiver
 import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.location.Location
 import android.location.LocationManager
 import android.os.Build
 import android.os.Handler
 import android.provider.Settings
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.example.truespotrtlsandroid.beacon.BeaconRegion
 import com.example.truespotrtlsandroid.models.Credentials
 import com.google.android.gms.common.api.GoogleApiClient
@@ -97,4 +101,24 @@ class TSLocationManager(context: Context, activity: Activity) {
             mode != Settings.Secure.LOCATION_MODE_OFF
         }
     }
+
+
+    fun observeBeaconRanged(completion: (Intent)->Unit,context: Context): BroadcastReceiver {
+        val mBeaconsReceiver = object : BroadcastReceiver() {
+            override fun onReceive(context: Context?, intent: Intent?) {
+                completion.invoke(intent!!.getSerializableExtra(beaconRangeNotificationName) as Intent)
+            }
+        }
+        LocalBroadcastManager.getInstance(context).registerReceiver(mBeaconsReceiver, IntentFilter(beaconRangeNotificationName))
+        return mBeaconsReceiver
+    }
+
+    // MARK: - CLLocationManagerDelegateb
+    fun locationManager(manager: TSLocationManager, didRangeBeacons: Boolean,  beacons : HashMap<String, TSBeacon>?,  region: BeaconRegion) {
+        val intent = Intent(beaconRangeNotificationName)
+        intent.putExtra("beaconDetected", beacons)
+        LocalBroadcastManager.getInstance(mContext).sendBroadcast(intent)
+    }
+
+
 }

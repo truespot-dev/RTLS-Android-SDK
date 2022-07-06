@@ -86,5 +86,8 @@ object TrueSpot {
         BeaconServices.pair(PairRequestBody(assetIdentifier, assetType), tagId, viewModelStoreOwner, viewLifecycleOwner, context, activity,completion)
     }
 
+    fun unpair(deviceID: String, pairingId: String, viewModelStoreOwner: ViewModelStoreOwner, viewLifecycleOwner: LifecycleOwner, context: Context, activity: Activity,completion: (exception: Exception?) -> Unit) {
+        BeaconServices.unpair(deviceID, pairingId, viewModelStoreOwner, viewLifecycleOwner, context, activity,completion)
+    }
 
 }

@@ -8,4 +8,6 @@ class BaseMainRepository(private val baseApiHelper: BaseApiHelper) {
     suspend fun getTrackingDevices() = baseApiHelper.getTrackingDevices()
     suspend fun pair(pairRequestBody: PairRequestBody?, tagId: String) =
         baseApiHelper.pair(pairRequestBody, tagId)
+    suspend fun unpair(deviceID: String, pairingId: String) =
+        baseApiHelper.unpair(deviceID, pairingId)
 }
