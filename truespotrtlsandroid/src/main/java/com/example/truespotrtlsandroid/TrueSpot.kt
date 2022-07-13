@@ -27,11 +27,11 @@ object TrueSpot {
     ///   - tenatId: the tenantId for your organization - will be provided for your organization
     ///   - clientSecret: client secret - will be provided for your organization
     ///   - isDebugMode: If turn on, you can see logs as you use the SDK,
-    fun configure(tenantId: String,clientSecret: String,isDebugMode: Boolean,application: Application,viewModelStoreOwner: ViewModelStoreOwner, viewLifecycleOwner: LifecycleOwner, context: Context, activity: Activity, ) {
+    fun configure(tenantId: String,clientSecret: String,isDebugMode: Boolean,completion: (exception: Exception?) -> Unit,application: Application,viewModelStoreOwner: ViewModelStoreOwner, viewLifecycleOwner: LifecycleOwner, context: Context, activity: Activity, ) {
         TrueSpot.isDebugMode = isDebugMode
         Credentials.tenantId = tenantId
         Credentials.clientSecret = clientSecret
-        BeaconServices.authenticate(viewModelStoreOwner, viewLifecycleOwner, context, activity, application)
+        BeaconServices.authenticate(completion,viewModelStoreOwner, viewLifecycleOwner, context, activity, application)
     }
 
     /// In order to get access device location, apple requires us to ask the user permission. Call this function when you need to request permission to the user
