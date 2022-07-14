@@ -11,8 +11,6 @@ import com.example.truespotrtlsandroid.models.Credentials
 import com.example.truespotrtlsandroid.models.PairRequestBody
 import com.example.truespotrtlsandroid.models.TSDevice
 import java.util.*
-import kotlin.collections.ArrayList
-import kotlin.collections.HashMap
 
 object TrueSpot {
 
@@ -27,7 +25,13 @@ object TrueSpot {
     ///   - tenatId: the tenantId for your organization - will be provided for your organization
     ///   - clientSecret: client secret - will be provided for your organization
     ///   - isDebugMode: If turn on, you can see logs as you use the SDK,
-    fun configure(tenantId: String,clientSecret: String,isDebugMode: Boolean,completion: (exception: Exception?) -> Unit,application: Application,viewModelStoreOwner: ViewModelStoreOwner, viewLifecycleOwner: LifecycleOwner, context: Context, activity: Activity, ) {
+    fun configure(
+        tenantId: String,
+        clientSecret: String,
+        isDebugMode: Boolean,
+        completion: CompletionCallBack,
+        application: Application,
+        viewModelStoreOwner: ViewModelStoreOwner, viewLifecycleOwner: LifecycleOwner, context: Context, activity: Activity ) {
         TrueSpot.isDebugMode = isDebugMode
         Credentials.tenantId = tenantId
         Credentials.clientSecret = clientSecret

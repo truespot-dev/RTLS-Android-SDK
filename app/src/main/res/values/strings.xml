@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">TrueSpotRTLSAndroidSDK</string>
+    <string name="secret">A3s6v9y$B&amp;E)H@McQfTjWnZr4u7w!z%C*F-JaNdRgUkXp2s5v8y/A?D(G+KbPeSh</string>
+    <string name="tenantId">5c74604185f8c116cc5f5382</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
