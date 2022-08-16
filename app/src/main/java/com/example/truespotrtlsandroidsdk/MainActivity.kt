@@ -36,7 +36,9 @@ class MainActivity : AppCompatActivity(), CompletionCallBack {
         setContentView(R.layout.activity_main)
 
 
-            TrueSpot.configure( getString(R.string.tenantId),getString(R.string.secret),true,this,application,this,this,applicationContext,this@MainActivity)
+            TrueSpot.configure( getString(R.string.tenantId),getString(R.string.secret),true,application,this,this,applicationContext,this@MainActivity){
+                Log.i("completion_callback",it?.message.toString())
+            }
 
 
         trackingDeviceBtn = findViewById(R.id.trackingDevice)

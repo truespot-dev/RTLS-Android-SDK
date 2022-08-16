@@ -18,7 +18,7 @@ object BeaconServices {
 
     var locationManager: TSLocationManager? = null
 
-    fun authenticate(completion: CompletionCallBack,viewModelStoreOwner: ViewModelStoreOwner,viewLifecycleOwner: LifecycleOwner, context: Context, activity: Activity, application: Application) {
+    fun authenticate(viewModelStoreOwner: ViewModelStoreOwner,viewLifecycleOwner: LifecycleOwner, context: Context, activity: Activity, application: Application,completion: (exception: Exception?) -> Unit) {
         val beaconServiceViewModel: BeaconServiceViewModel = ViewModelProvider(viewModelStoreOwner,
             BeaconServiceViewModelFactory(
                 activity.application,
@@ -34,12 +34,7 @@ object BeaconServices {
                         getAppinfo(viewModelStoreOwner, viewLifecycleOwner, context, activity)
                         getTrackingDevices({devices, exception ->
                         },viewModelStoreOwner,viewLifecycleOwner,context,activity)
-                        completion.completion {
-                            it?.message as Exception
-                        }
-
-
-
+                        completion.invoke(it?.message as Exception)
                     }
                 }
                 Status.LOADING -> {
