@@ -3,99 +3,127 @@ package com.example.truespotrtlsandroid
 import android.app.Activity
 import android.app.Application
 import android.content.Context
+import android.util.Log
+import android.util.TypedValue
+import android.view.Gravity
+import android.view.View
 import android.widget.Switch
+import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.observe
+import com.example.truespotrtlsandroid.models.*
 import com.example.truespotrtlsandroid.models.Credentials
-import com.example.truespotrtlsandroid.models.PairRequestBody
-import com.example.truespotrtlsandroid.models.TSDevice
+import com.google.gson.Gson
+import okhttp3.*
+import java.io.IOException
+import okhttp3.HttpUrl
+import org.json.JSONArray
+
+import org.json.JSONObject
+
+
 
 
 object BeaconServices {
 
     var locationManager: TSLocationManager? = null
 
-    fun authenticate(viewModelStoreOwner: ViewModelStoreOwner,viewLifecycleOwner: LifecycleOwner, context: Context, activity: Activity, application: Application,completion: (exception: Exception?) -> Unit) {
-        val beaconServiceViewModel: BeaconServiceViewModel = ViewModelProvider(viewModelStoreOwner,
-            BeaconServiceViewModelFactory(
-                activity.application,
-                ApiHelper(RetrofitBuilder.apiAuthService)))
-            .get(BeaconServiceViewModel::class.java)
 
-        beaconServiceViewModel.authenticate(Credentials.tenantId).observe(viewLifecycleOwner) {
-            when (it.status) {
-                Status.SUCCESS -> {
-                    if (it.data != null) {
-                        val result = it.data
-                        Credentials.jwt = result.jwt
-                        getAppinfo(viewModelStoreOwner, viewLifecycleOwner, context, activity)
-                        getTrackingDevices({devices, exception ->
-                        },viewModelStoreOwner,viewLifecycleOwner,context,activity)
-                        completion.invoke(it?.message as Exception)
-                    }
-                }
-                Status.LOADING -> {
-                }
-                Status.ERROR -> {
+    fun authenticate()
+    {
+        val url = API.authURL+API.Endpoint.authorization+"?tenantId=${Credentials.tenantId}"
 
-                }
-            }
-        }
-    }
+        // add parameter
+        val formBody = FormBody.Builder().add("tenantId", Credentials.tenantId)
+            .build()
 
-    fun getAppinfo(viewModelStoreOwner: ViewModelStoreOwner, viewLifecycleOwner: LifecycleOwner, context: Context, activity: Activity) {
-        val beaconBaseServiceViewModel: BeaconBaseServiceViewModel = ViewModelProvider(viewModelStoreOwner,
-            BeaconBaseServiceViewModelFactory(
-                activity.application,
-                BaseApiHelper(BaseRetrofitBuilder.apiBaseService)))
-            .get(BeaconBaseServiceViewModel::class.java)
+        // creating request
+        val request = Request.Builder().url(url)
+            .addHeader("Authorization", "Basic ${Credentials.clientSecret}")
+            .post(formBody)
+            .build()
 
-
-        beaconBaseServiceViewModel.getAppinfo().observe(viewLifecycleOwner) {
-            when (it.status) {
-                Status.SUCCESS -> {
-                    if (it.data != null) {
-                        val result = it.data
-                        Credentials.appInfo = result
-                        locationManager = TSLocationManager(context, activity)
-                        locationManager?.startScanning()
-                    }
-                }
-                Status.LOADING -> {
-                }
-                Status.ERROR -> {
+        var client = OkHttpClient()
+         client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) { }
+            override fun onResponse(call: Call, response: Response) {
+                if(response.isSuccessful)
+                {
+                    var auth : Authorization = Gson().fromJson(response.body?.charStream(),Authorization::class.java)
+                    Credentials.jwt = auth.jwt
+                    getAppinfo()
+                    getTrackingDevices { devices, exception -> }
                 }
             }
-        }
 
+        })
 
     }
 
-    fun getTrackingDevices(completion: (devices: MutableList<TSDevice>, exception: Exception?) -> Unit,viewModelStoreOwner: ViewModelStoreOwner, viewLifecycleOwner: LifecycleOwner, context: Context, activity: Activity) {
-        val beaconBaseServiceViewModel: BeaconBaseServiceViewModel = ViewModelProvider(viewModelStoreOwner,
-            BeaconBaseServiceViewModelFactory(
-                activity.application,
-                BaseApiHelper(BaseRetrofitBuilder.apiBaseService)))
-            .get(BeaconBaseServiceViewModel::class.java)
+    fun getAppinfo()
+    {
+        val url = API.RTLSBaseURL+API.Endpoint.applications+"?self"
 
-        beaconBaseServiceViewModel.getTrackingDevices().observe(viewLifecycleOwner) {
-            when (it.status) {
-                Status.SUCCESS -> {
-                    val device = it.data
-                    TSBeaconManagers.updateTrackingDevices(device)
-                    completion(device as MutableList<TSDevice>,it.message as Exception)
-                }
-                Status.LOADING -> {
-                }
+        // add parameter
+        val formBody = FormBody.Builder().add("", "")
+            .build()
 
-                Status.ERROR -> {
-                }
+        // creating request
+        val request = Request.Builder().url(url)
+            .addHeader("Authorization", "Bearer ${Credentials.jwt}")
+            .get()
+            .build()
 
+        var client = OkHttpClient()
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) { }
+            override fun onResponse(call: Call, response: Response) {
+                if(response.isSuccessful)
+                {
+                    var tsApplication : TSApplication = Gson().fromJson(response.body?.charStream(),TSApplication::class.java)
+                    Credentials.appInfo = tsApplication
+                    /*locationManager = TSLocationManager(context, activity)
+                    locationManager?.startScanning()*/
+                }
             }
-        }
+
+        })
+
+    }
+
+    fun getTrackingDevices(completion: (devices: MutableList<TSDevice>, exception: Exception?) -> Unit)
+    {
+        val url = API.RTLSBaseURL+API.Endpoint.trackingDevices
+
+        // add parameter
+        val formBody = FormBody.Builder().add("", "")
+            .build()
+
+        // creating request
+        val request = Request.Builder().url(url)
+            .addHeader("Authorization", "Bearer ${Credentials.jwt}")
+            .get()
+            .build()
+
+        var client = OkHttpClient()
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) { }
+            override fun onResponse(call: Call, response: Response) {
+                if(response.isSuccessful)
+                {
+                    var tsDevice : TSDevice = Gson().fromJson(response.body?.charStream(),TSDevice::class.java)
+                    TSBeaconManagers.updateTrackingDevices(arrayListOf(tsDevice))
+                    completion.invoke(arrayListOf(tsDevice),response.message as Exception)
+
+                }
+            }
+
+        })
+
     }
 
     fun pair(pairRequestBody: PairRequestBody?, tagID: String, viewModelStoreOwner: ViewModelStoreOwner, viewLifecycleOwner: LifecycleOwner, context: Context, activity: Activity, completion: (devices: MutableList<TSDevice>, exception: Exception?) -> Unit) {
@@ -153,13 +181,13 @@ object API {
 
     var  environment: TSEnvironment = TSEnvironment.dev
     val authURL = when(environment){
-        TSEnvironment.dev -> "https://authprovider-d-us-c-api.azurewebsites.net"
-        TSEnvironment.prod -> "https://auth.truespot.com"
+        TSEnvironment.dev -> "https://authprovider-d-us-c-api.azurewebsites.net/"
+        TSEnvironment.prod -> "https://auth.truespot.com/"
     }
 
     val RTLSBaseURL = when(environment){
-        TSEnvironment.dev -> "https://rtls-d-us-c-api.azurewebsites.net"
-        TSEnvironment.prod -> "https://rtls.truespot.com"
+        TSEnvironment.dev -> "https://rtls-d-us-c-api.azurewebsites.net/"
+        TSEnvironment.prod -> "https://rtls.truespot.com/"
     }
 
     object Endpoint {
