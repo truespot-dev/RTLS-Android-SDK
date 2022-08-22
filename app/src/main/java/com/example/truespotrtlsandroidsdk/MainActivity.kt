@@ -20,6 +20,14 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        TrueSpot.configure(this,"600efa6da13b840ab04ad9c2","1234567890",true){
+          Log.i("Config","Completion")
+        }
+
+        //TrueSpot.requestLocationPermission()
+
+
     }
 
 }
