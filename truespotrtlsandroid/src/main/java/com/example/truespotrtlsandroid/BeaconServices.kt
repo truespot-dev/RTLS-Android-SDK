@@ -42,23 +42,27 @@ object BeaconServices {
             .build()
         val client = OkHttpClient()
          client.newCall(request).enqueue(object : Callback {
-            override fun onFailure(call: Call, e: IOException) { }
+            override fun onFailure(call: Call, e: IOException) {
+                completion.invoke(e)
+            }
             override fun onResponse(call: Call, response: Response) {
-                if(response.isSuccessful)
-                {
-                    val auth : Authorization = Gson().fromJson(response.body?.charStream(),Authorization::class.java)
-                    Credentials.jwt = auth.jwt
-                    getAppinfo()
-                    getTrackingDevices { devices, exception -> }
-                    completion(response.message as Exception)
-                }else
-                {
-                    completion(response.message as Exception)
+                try {
+                    if(response.isSuccessful)
+                    {
+                        val auth : Authorization = Gson().fromJson(response.body?.charStream(),Authorization::class.java)
+                        Credentials.jwt = auth.jwt
+                        getAppinfo()
+                        getTrackingDevices { devices, exception ->
+                            completion.invoke(exception)
+                        }
+                    }else {
+                        throw Exception(response.message)
+                    }
+                }catch (exception : Exception) {
+                    completion.invoke(exception)
                 }
             }
-
         })
-
     }
 
     fun getAppinfo()
@@ -74,19 +78,16 @@ object BeaconServices {
         client.newCall(request).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) { }
             override fun onResponse(call: Call, response: Response) {
-                if(response.isSuccessful)
-                {
+                if(response.isSuccessful) {
                     val tsApplication : TSApplication = Gson().fromJson(response.body?.charStream(),TSApplication::class.java)
                     Credentials.appInfo = tsApplication
                     TSLocationManager.startScanning()
                 }
             }
-
         })
-
     }
 
-    fun getTrackingDevices(completion: (devices: MutableList<TSDevice>, exception: Exception?) -> Unit)
+    fun getTrackingDevices(completion: (devices: ArrayList<TSDevice>, exception: Exception?) -> Unit)
     {
         val url = API.RTLSBaseURL+API.Endpoint.trackingDevices
         // creating request
@@ -97,19 +98,25 @@ object BeaconServices {
 
         val client = OkHttpClient()
         client.newCall(request).enqueue(object : Callback {
-            override fun onFailure(call: Call, e: IOException) { }
+            override fun onFailure(call: Call, e: IOException) {
+                completion.invoke(arrayListOf(),e)
+            }
             override fun onResponse(call: Call, response: Response) {
-                if(response.isSuccessful)
-                {
-                    val tsDevice : TSDevice = Gson().fromJson(response.body?.charStream(),TSDevice::class.java)
-                    TSBeaconManagers.updateTrackingDevices(arrayListOf(tsDevice))
-                    completion.invoke(arrayListOf(tsDevice),response.message as Exception)
-
+                try {
+                    if(response.isSuccessful) {
+                        val result = Gson().fromJson(response.body?.charStream(),TSDevice::class.java) as ArrayList<TSDevice>
+                        val device = if(result.isNullOrEmpty()){arrayListOf()}else{result}
+                        TSBeaconManagers.updateTrackingDevices(device)
+                        completion.invoke(device,null)
+                    }
+                    else{
+                        throw Exception(response.message)
+                    }
+                }catch (exception : Exception) {
+                    completion.invoke(arrayListOf(),exception)
                 }
             }
-
         })
-
     }
 
     fun pair(assetIdentifier: String, assetType: String, tagId: String, completion: (devices: TSDevice?, exception: Exception?) -> Unit)
@@ -128,17 +135,22 @@ object BeaconServices {
 
         val client = OkHttpClient()
         client.newCall(request).enqueue(object : Callback {
-            override fun onFailure(call: Call, e: IOException) { }
+            override fun onFailure(call: Call, e: IOException) {
+                completion.invoke(null,e)
+            }
             override fun onResponse(call: Call, response: Response) {
-                if(response.isSuccessful)
-                {
-                    val device : TSDevice = Gson().fromJson(response.body?.charStream(),TSDevice::class.java)
-                    completion(device,response.message as Exception)
+                try {
+                    if(response.isSuccessful) {
+                        val device = Gson().fromJson(response.body?.charStream(),TSDevice::class.java) as TSDevice
+                        completion.invoke(device,null)
+                    }else {
+                        throw Exception(response.message)
+                    }
+                }catch (exception : Exception) {
+                    completion.invoke(null,exception)
                 }
             }
-
         })
-
     }
 
     fun unpair(deviceID: String, pairingId: String,  completion: (exception: Exception?) -> Unit)
@@ -151,12 +163,20 @@ object BeaconServices {
             .build()
         val client = OkHttpClient()
         client.newCall(request).enqueue(object : Callback {
-            override fun onFailure(call: Call, e: IOException) { }
+            override fun onFailure(call: Call, e: IOException) {
+                completion.invoke(e)
+            }
             override fun onResponse(call: Call, response: Response) {
-                if(response.isSuccessful)
-                {
-                    completion(response.message as Exception)
+                try {
+                    if(response.isSuccessful) {
+                        completion.invoke(null)
+                    }else{
+                        throw Exception(response.message)
+                    }
+                }catch (exception : Exception){
+                    completion.invoke(exception)
                 }
+
             }
 
         })

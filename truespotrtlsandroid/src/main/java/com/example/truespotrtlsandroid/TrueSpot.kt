@@ -13,16 +13,6 @@ import com.example.truespotrtlsandroid.models.TSDevice
 import java.util.*
 
 object TrueSpot : Application() {
-    private val instance: TrueSpot? = null
-
-    fun getInstance(): TrueSpot? {
-        return instance
-    }
-
-    fun getContext(): Context? {
-        return instance
-        // or return instance.getApplicationContext();
-    }
     var isDebugMode = false
 
     init {
