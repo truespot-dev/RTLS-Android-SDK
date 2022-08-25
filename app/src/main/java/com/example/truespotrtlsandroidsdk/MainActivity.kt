@@ -22,11 +22,14 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         TrueSpot.configure(this,"600efa6da13b840ab04ad9c2","1234567890",true){
-          Log.i("Config","Completion")
+            if (it == null) {
+                Log.i("Configure","Success")
+            } else {
+                Log.i("Configure","Error:${it}")
+            }
         }
 
         //TrueSpot.requestLocationPermission()
-
 
     }
 
