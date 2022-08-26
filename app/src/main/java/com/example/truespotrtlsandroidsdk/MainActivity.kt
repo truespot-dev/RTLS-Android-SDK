@@ -24,8 +24,10 @@ class MainActivity : AppCompatActivity() {
         TrueSpot.configure(this,"600efa6da13b840ab04ad9c2","1234567890",true){
             if (it == null) {
                 Log.i("Configure","Success")
+                TrueSpot.startScanning()
             } else {
                 Log.i("Configure","Error:${it}")
+                TrueSpot.startScanning()
             }
         }
 

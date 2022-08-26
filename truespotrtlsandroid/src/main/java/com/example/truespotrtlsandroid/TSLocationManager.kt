@@ -25,15 +25,15 @@ object TSLocationManager  {
 
     init {
         requestLocationPermission()
-        val uuids = Credentials.appInfo.uuids.toCollection(ArrayList())
-        if(uuids.isNotEmpty()) {
+       // val uuids = Credentials.appInfo.uuids.toCollection(ArrayList())
+       /* if(uuids.isNotEmpty()) {
             for (uuid in uuids) {
                 beaconRegion?.add(BeaconRegion("ranged beacons ${uuids.indexOf(uuid)}",beaconUUID as UUID,0,0))
             }
         }
         else {
             beaconRegion?.add(BeaconRegion("ranged beacons ${0}","5C38DBDE-567C-4CCA-B1DA-40A8AD465656" as UUID,0,0))
-        }
+        }*/
     }
 
 
@@ -46,6 +46,7 @@ object TSLocationManager  {
     fun startScanning() {
         updateLocation(true)
         startMonitoring()
+        TSBeaconManagers.initializeBeaconObserver()
     }
 
     fun stopScanning() {
@@ -88,7 +89,7 @@ object TSLocationManager  {
     }
 
 
-    fun observeBeaconRanged(completion: (Intent)->Unit,context: Context): BroadcastReceiver {
+    fun observeBeaconRanged(context: Context, completion: (Intent)->Unit): BroadcastReceiver {
         val mBeaconsReceiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
                 completion.invoke(intent!!.getSerializableExtra(beaconRangeNotificationName) as Intent)
@@ -98,8 +99,8 @@ object TSLocationManager  {
         return mBeaconsReceiver
     }
 
-    // MARK: - CLLocationManagerDelegateb
-    fun locationManager(manager: TSLocationManager, didRangeBeacons: Boolean,  beacons : HashMap<String, TSBeacon>?,  region: BeaconRegion) {
+
+    fun locationManager(beacons : HashMap<String, TSBeacon>?) {
         val intent = Intent(beaconRangeNotificationName)
         intent.putExtra("beaconDetected", beacons)
         LocalBroadcastManager.getInstance(TSApplicationContext.TSContext).sendBroadcast(intent)

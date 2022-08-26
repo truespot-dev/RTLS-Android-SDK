@@ -175,13 +175,12 @@ public class TSBeacon extends BaseJSONModel {
         this.assetType = assetType;
     }
 
-    TSBeacon(TSBeaconSighting beacon, CLLocation currentLocation) {
-        lat = currentLocation.coordinate.latitude != null ? Double.parseDouble(currentLocation.coordinate.latitude) : 0;
-        lat = currentLocation.coordinate.longitude != null ? Double.parseDouble(currentLocation.coordinate.longitude) : 0;
-
+    TSBeacon(TSBeaconSighting beacon) {
+        lat = beacon.getLat();
+        lng = beacon.getLng();
         RSSI = beacon.getRSSI();
         beaconIdentifier = beacon.getBeaconId();
-        accuracy = currentLocation.horizontalAccuracy != null ? Double.parseDouble(currentLocation.horizontalAccuracy) : 0;
+        accuracy = beacon.accuracy;
         uuid = beacon.getUuid().replace("-", "");
         major = String.valueOf(beacon.getMajor());
         minor = String.valueOf(beacon.getMinor());

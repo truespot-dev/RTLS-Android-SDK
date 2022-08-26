@@ -28,6 +28,7 @@ import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import java.util.*
 import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
 
 
 object BeaconManagers : ScanCallback() {
@@ -37,6 +38,7 @@ object BeaconManagers : ScanCallback() {
     private var btScanner: BluetoothLeScanner? = null
     private var mLocation: Location? = null
     private var scanning = false
+    private var iBeaconsMap : HashMap<String, TSBeacon>? = HashMap()
     var beaconUpdatedList: MutableList<TSBeaconSighting>? = ArrayList()
     @SuppressLint("StaticFieldLeak")
     private var fusedLocationProviderClient: FusedLocationProviderClient? = null
@@ -59,22 +61,24 @@ object BeaconManagers : ScanCallback() {
             val beacon: Beacon? =
                 buildBeacon(beaconType, result.device, result.rssi, result.scanRecord?.bytes)
             val beaconList: MutableList<TSBeaconSighting> = ArrayList()
-            if (beacon != null) {
-                arrayOf(beacon).forEach {
-                    beaconList.add(
-                        TSBeaconSighting(
-                            it.device.name,
-                            it.rssi,
-                            it.device.address,
-                            IBeacon(it).uuid,
-                            IBeacon(it).major,
-                            IBeacon(it).minor
-                        )
+            val getCurrentLocation = getCurrentLocation()
+            val sighting: TSBeacon? = iBeaconsMap?.get(result.device.name)
+            if(sighting == null)
+            {
+                if (beacon != null)
+                {
+                    iBeaconsMap?.put(result.device.name,
+                        TSBeacon(TSBeaconSighting(beacon.device?.name,beacon.rssi,beacon.device?.address,IBeacon(beacon).uuid,
+                            IBeacon(beacon).major,
+                            IBeacon(beacon).minor,
+                            getCurrentLocation?.latitude!!,
+                            getCurrentLocation.longitude,
+                            getCurrentLocation.accuracy))
                     )
                 }
-
+                TSLocationManager.locationManager(iBeaconsMap)
             }
-            if (!beaconList.isNullOrEmpty()) {
+           /* if (!beaconList.isNullOrEmpty()) {
                 beaconList.forEach {
                     if (!beaconUpdatedList?.contains(it)!!) {
                         beaconUpdatedList?.add(it)
@@ -102,7 +106,7 @@ object BeaconManagers : ScanCallback() {
                     }
                 }
             }
-            Log.i("Log", "beaconList-->${Gson().toJson(beaconUpdatedList)}")
+            Log.i("Log", "beaconList-->${Gson().toJson(beaconUpdatedList)}")*/
         }
     }
 

@@ -30,6 +30,33 @@ public class TSBeaconSighting extends BaseJSONModel {
     private String beaconIdentifier;
     private String id;
     public Proximity proximity;
+    public double lat;
+    public double lng;
+    public float accuracy;
+
+    public double getLat() {
+        return lat;
+    }
+
+    public void setLat(double lat) {
+        this.lat = lat;
+    }
+
+    public double getLng() {
+        return lng;
+    }
+
+    public void setLng(double lng) {
+        this.lng = lng;
+    }
+
+    public float getAccuracy() {
+        return accuracy;
+    }
+
+    public void setAccuracy(float accuracy) {
+        this.accuracy = accuracy;
+    }
 
     public String getBeaconIdentifier() {
         return beaconIdentifier;
@@ -47,7 +74,7 @@ public class TSBeaconSighting extends BaseJSONModel {
         this.id = id;
     }
 
-    public TSBeaconSighting(String beaconId, int rssi, String deviceAddress, String uuid, int minor, int major) {
+    public TSBeaconSighting(String beaconId, int rssi, String deviceAddress, String uuid, int minor, int major,double lat,double lng,float accuracy) {
         this.beaconId = beaconId;
         this.rssi = rssi;
         //this.timeMillis = other.timeMillis;
@@ -58,6 +85,9 @@ public class TSBeaconSighting extends BaseJSONModel {
         this.major = major;
         this.deviceAddress = deviceAddress;
         this.beaconIdentifier = beaconId;
+        this.lat = lat;
+        this.lng = lng;
+        this.accuracy = accuracy;
         // this.id = other.id;
     }
 
