@@ -135,16 +135,6 @@ object BeaconManagers : ScanCallback(),LocationListener {
             .setScanMode(SCAN_MODE_LOW_LATENCY)
             .build()
 
-
-       /* val settings: ScanSettings = ScanSettings.Builder()
-            .setCallbackType(CALLBACK_TYPE_ALL_MATCHES)
-            .setLegacy(false)
-            .setMatchMode(MATCH_MODE_AGGRESSIVE)
-            .setNumOfMatches(MATCH_NUM_MAX_ADVERTISEMENT)
-            .setPhy(PHY_LE_ALL_SUPPORTED)
-            .setReportDelay(0)
-            .setScanMode(SCAN_MODE_LOW_LATENCY)
-            .build()*/
         btScanner = btAdapter?.bluetoothLeScanner
         btScanner?.startScan(null,settings,this)
         scanning = true
