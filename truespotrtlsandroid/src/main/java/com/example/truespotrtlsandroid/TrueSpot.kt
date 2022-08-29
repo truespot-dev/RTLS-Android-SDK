@@ -35,7 +35,8 @@ object TrueSpot : Application() {
         TSLocationManager.requestLocationPermission()
     }
 
-    fun startScanning() {
+    fun startScanning(context: Context) {
+        TSApplicationContext.TSContext = context
         TSLocationManager.startScanning()
     }
 

@@ -22,6 +22,7 @@ object TSLocationManager  {
     private const val beaconUUID: String = "5C38DBDE-567C-4CCA-B1DA-40A8AD465656"
     val beaconUUIDs = arrayOf("5C38DBDE-567C-4CCA-B1DA-40A8AD465656")
     private val beaconRegion: ArrayList<BeaconRegion>? = null
+    var locationManager: LocationManager = TSApplicationContext.TSContext.getSystemService(Context.LOCATION_SERVICE) as LocationManager
 
     init {
         requestLocationPermission()
@@ -38,7 +39,7 @@ object TSLocationManager  {
 
 
     fun requestLocationPermission() {
-        if (isLocationServiceEnabled()) {
+        if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
             startScanning()
         }
     }
@@ -92,7 +93,10 @@ object TSLocationManager  {
     fun observeBeaconRanged(context: Context, completion: (Intent)->Unit): BroadcastReceiver {
         val mBeaconsReceiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
-                completion.invoke(intent!!.getSerializableExtra(beaconRangeNotificationName) as Intent)
+                if(intent != null)
+                {
+                    completion.invoke(intent!!.getSerializableExtra(beaconRangeNotificationName) as Intent)
+                }
             }
         }
         LocalBroadcastManager.getInstance(context).registerReceiver(mBeaconsReceiver, IntentFilter(beaconRangeNotificationName))

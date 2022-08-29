@@ -17,8 +17,10 @@ import com.example.truespotrtlsandroid.models.BeaconType
 import com.example.truespotrtlsandroid.models.IBeacon
 import com.google.gson.Gson
 import android.bluetooth.le.ScanFilter
+import android.bluetooth.le.ScanSettings.*
 import android.content.pm.PackageManager
 import android.location.Location
+import android.location.LocationListener
 import android.location.LocationManager
 import android.text.TextUtils
 import android.widget.Toast
@@ -31,7 +33,7 @@ import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 
 
-object BeaconManagers : ScanCallback() {
+object BeaconManagers : ScanCallback(),LocationListener {
 
     private var btManager: BluetoothManager? = null
     private var btAdapter: BluetoothAdapter? = null
@@ -42,14 +44,18 @@ object BeaconManagers : ScanCallback() {
     var beaconUpdatedList: MutableList<TSBeaconSighting>? = ArrayList()
     @SuppressLint("StaticFieldLeak")
     private var fusedLocationProviderClient: FusedLocationProviderClient? = null
+    var locationManager: LocationManager = TSApplicationContext.TSContext.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+
+
 
     init {
-
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(TSApplicationContext.TSContext)
         btManager = TSApplicationContext.TSContext.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
         btAdapter = btManager?.adapter
         btScanner = btAdapter?.bluetoothLeScanner
         if (btAdapter != null && !btAdapter!!.isEnabled)
             scanning = false
+
 
     }
 
@@ -65,7 +71,7 @@ object BeaconManagers : ScanCallback() {
             val sighting: TSBeacon? = iBeaconsMap?.get(result.device.name)
             if(sighting == null)
             {
-                if (beacon != null)
+                if (beacon != null && getCurrentLocation != null)
                 {
                     iBeaconsMap?.put(result.device.name,
                         TSBeacon(TSBeaconSighting(beacon.device?.name,beacon.rssi,beacon.device?.address,IBeacon(beacon).uuid,
@@ -76,7 +82,10 @@ object BeaconManagers : ScanCallback() {
                             getCurrentLocation.accuracy))
                     )
                 }
-                TSLocationManager.locationManager(iBeaconsMap)
+                if(iBeaconsMap?.size!! > 0){
+                    TSLocationManager.locationManager(iBeaconsMap)
+                    TSBeaconManagers.initializeBeaconObserver()
+                }
             }
            /* if (!beaconList.isNullOrEmpty()) {
                 beaconList.forEach {
@@ -122,11 +131,22 @@ object BeaconManagers : ScanCallback() {
 
     fun startMonitoring() {
         val filters: ArrayList<ScanFilter> = ArrayList<ScanFilter>()
-        val settings: ScanSettings = ScanSettings.Builder()
-            .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY)
+        val settings: ScanSettings = Builder()
+            .setScanMode(SCAN_MODE_LOW_LATENCY)
             .build()
-        btScanner = btAdapter?.getBluetoothLeScanner()
-        btScanner?.startScan(null, settings, this)
+
+
+       /* val settings: ScanSettings = ScanSettings.Builder()
+            .setCallbackType(CALLBACK_TYPE_ALL_MATCHES)
+            .setLegacy(false)
+            .setMatchMode(MATCH_MODE_AGGRESSIVE)
+            .setNumOfMatches(MATCH_NUM_MAX_ADVERTISEMENT)
+            .setPhy(PHY_LE_ALL_SUPPORTED)
+            .setReportDelay(0)
+            .setScanMode(SCAN_MODE_LOW_LATENCY)
+            .build()*/
+        btScanner = btAdapter?.bluetoothLeScanner
+        btScanner?.startScan(null,settings,this)
         scanning = true
     }
 
@@ -198,17 +218,25 @@ object BeaconManagers : ScanCallback() {
     }
 
        private fun getCurrentLocation(): Location? {
-        fusedLocationProviderClient = TSApplicationContext.TSContext?.let {
-            LocationServices.getFusedLocationProviderClient(
-                it
-            )
-        }
-        if (TSApplicationContext.TSContext?.let {
-                checkRequiredPermission(
-                    Manifest.permission.ACCESS_FINE_LOCATION,
-                    it
-                )
-            }!!) {
+           if(checkRequiredPermission(Manifest.permission.ACCESS_FINE_LOCATION,TSApplicationContext.TSContext)!!)
+           {
+               if(isLocationEnabled())
+               {
+                   fusedLocationProviderClient?.lastLocation?.addOnCompleteListener(TSApplicationContext.TSContext as Activity){task->
+                       task.addOnSuccessListener { locations ->
+                           if(locations != null)
+                           {
+                               Log.i("location","location----${Gson().toJson(locations)}")
+                               if (locations != null) {
+                                   mLocation = locations
+                               }
+                           }
+                       }
+                   }
+               }
+           }
+        /*if (TSApplicationContext.TSContext?.let { checkRequiredPermission(
+                    Manifest.permission.ACCESS_FINE_LOCATION, it) }!!) {
             if (isLocationEnabled()) {
                 fusedLocationProviderClient?.lastLocation?.addOnCompleteListener { task ->
                     val location: Location = task.result
@@ -217,24 +245,27 @@ object BeaconManagers : ScanCallback() {
                     }
 
                 }
-                    ?.addOnFailureListener {
-                        Toast.makeText(TSApplicationContext.TSContext, "Failure Location", Toast.LENGTH_LONG).show()
-                    }
             } else {
                 Toast.makeText(TSApplicationContext.TSContext, "Turn On Location", Toast.LENGTH_LONG).show()
             }
         } else {
 
-        }
+        }*/
         return mLocation
     }
 
+
+
     private fun isLocationEnabled(): Boolean {
-        val locationManager: LocationManager =
-            TSApplicationContext.TSContext?.getSystemService(Context.LOCATION_SERVICE) as LocationManager
-        return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) || locationManager.isProviderEnabled(
-            LocationManager.NETWORK_PROVIDER
-        )
+        val locationManager: LocationManager = TSApplicationContext.TSContext?.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        if(locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER))
+        {
+            return true
+        }
+        else if(locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)){
+            return  true
+        }
+        return false
     }
 
     private fun checkRequiredPermission(permission: String, context: Context): Boolean? {
@@ -242,6 +273,10 @@ object BeaconManagers : ScanCallback() {
             context,
             permission
         ) == PackageManager.PERMISSION_GRANTED
+    }
+
+    override fun onLocationChanged(location: Location) {
+        TODO("Not yet implemented")
     }
 
 
