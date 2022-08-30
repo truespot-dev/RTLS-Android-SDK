@@ -40,7 +40,7 @@ object BeaconManagers : ScanCallback(),LocationListener {
     private var btScanner: BluetoothLeScanner? = null
     private var mLocation: Location? = null
     private var scanning = false
-    private var iBeaconsMap : HashMap<String, TSBeacon>? = HashMap()
+    private var iBeaconsMap : HashMap<String, TSBeaconSighting>? = HashMap()
     var beaconUpdatedList: MutableList<TSBeaconSighting>? = ArrayList()
     @SuppressLint("StaticFieldLeak")
     private var fusedLocationProviderClient: FusedLocationProviderClient? = null
@@ -68,23 +68,32 @@ object BeaconManagers : ScanCallback(),LocationListener {
                 buildBeacon(beaconType, result.device, result.rssi, result.scanRecord?.bytes)
             val beaconList: MutableList<TSBeaconSighting> = ArrayList()
             val getCurrentLocation = getCurrentLocation()
-            val sighting: TSBeacon? = iBeaconsMap?.get(result.device.name)
+            val sighting: TSBeaconSighting? = iBeaconsMap?.get(result.device.name)
             if(sighting == null)
             {
-                if (beacon != null && getCurrentLocation != null)
+                if (beacon != null)
                 {
                     iBeaconsMap?.put(result.device.name,
-                        TSBeacon(TSBeaconSighting(beacon.device?.name,beacon.rssi,beacon.device?.address,IBeacon(beacon).uuid,
+                        TSBeaconSighting(beacon.device?.name,beacon.rssi,beacon.device?.address,IBeacon(beacon).uuid,
                             IBeacon(beacon).major,
                             IBeacon(beacon).minor,
-                            getCurrentLocation?.latitude!!,
-                            getCurrentLocation.longitude,
-                            getCurrentLocation.accuracy))
-                    )
+                            getCurrentLocation?.latitude ?: 0.0,
+                            getCurrentLocation?.longitude ?: 0.0,
+                            getCurrentLocation?.accuracy ?: 0f
+                        ))
+                    beaconUpdatedList?.add(TSBeaconSighting(beacon.device?.name,beacon.rssi,beacon.device?.address,IBeacon(beacon).uuid,
+                        IBeacon(beacon).major,
+                        IBeacon(beacon).minor,
+                        getCurrentLocation?.latitude ?: 0.0,
+                        getCurrentLocation?.longitude ?: 0.0,
+                        getCurrentLocation?.accuracy ?: 0f
+                    ))
+
                 }
                 if(iBeaconsMap?.size!! > 0){
                     TSLocationManager.locationManager(iBeaconsMap)
                     TSBeaconManagers.initializeBeaconObserver()
+
                 }
             }
            /* if (!beaconList.isNullOrEmpty()) {
@@ -162,7 +171,6 @@ object BeaconManagers : ScanCallback(),LocationListener {
                 BeaconType.I_BEACON -> {
                     return IBeacon(beacon)
                 }
-
             }
         }
         return null

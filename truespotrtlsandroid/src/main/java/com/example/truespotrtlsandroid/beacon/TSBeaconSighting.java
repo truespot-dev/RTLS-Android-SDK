@@ -29,10 +29,28 @@ public class TSBeaconSighting extends BaseJSONModel {
     private String deviceAddress;
     private String beaconIdentifier;
     private String id;
-    public Proximity proximity;
+    public Proximity proximity = Proximity.UNKNOWN;
     public double lat;
     public double lng;
     public float accuracy;
+    public String assetIdentifier;
+    public String assetType;
+
+    public String getAssetIdentifier() {
+        return assetIdentifier;
+    }
+
+    public void setAssetIdentifier(String assetIdentifier) {
+        this.assetIdentifier = assetIdentifier;
+    }
+
+    public String getAssetType() {
+        return assetType;
+    }
+
+    public void setAssetType(String assetType) {
+        this.assetType = assetType;
+    }
 
     public double getLat() {
         return lat;

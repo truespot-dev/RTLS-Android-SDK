@@ -9,6 +9,7 @@ import android.os.Handler
 import android.provider.Settings
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.example.truespotrtlsandroid.beacon.BeaconRegion
+import com.example.truespotrtlsandroid.beacon.TSBeaconSighting
 import com.example.truespotrtlsandroid.models.Credentials
 import com.google.android.gms.common.api.GoogleApiClient
 import timber.log.Timber
@@ -22,6 +23,7 @@ object TSLocationManager  {
     private const val beaconUUID: String = "5C38DBDE-567C-4CCA-B1DA-40A8AD465656"
     val beaconUUIDs = arrayOf("5C38DBDE-567C-4CCA-B1DA-40A8AD465656")
     private val beaconRegion: ArrayList<BeaconRegion>? = null
+    private var mIntent : Intent? = null
     var locationManager: LocationManager = TSApplicationContext.TSContext.getSystemService(Context.LOCATION_SERVICE) as LocationManager
 
     init {
@@ -90,12 +92,13 @@ object TSLocationManager  {
     }
 
 
-    fun observeBeaconRanged(context: Context, completion: (Intent)->Unit): BroadcastReceiver {
+    fun observeBeaconRanged(context: Context, completion: (beacons : HashMap<String, TSBeaconSighting>?)->Unit): BroadcastReceiver {
         val mBeaconsReceiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
                 if(intent != null)
                 {
-                    completion.invoke(intent!!.getSerializableExtra(beaconRangeNotificationName) as Intent)
+                    completion.invoke(intent?.getSerializableExtra("beaconDetected") as HashMap<String, TSBeaconSighting>)
+                    //completion.invoke(intent!!.getSerializableExtra("beaconDetected") as Intent)
                 }
             }
         }
@@ -104,11 +107,9 @@ object TSLocationManager  {
     }
 
 
-    fun locationManager(beacons : HashMap<String, TSBeacon>?) {
+    fun locationManager(beacons : HashMap<String, TSBeaconSighting>?) {
         val intent = Intent(beaconRangeNotificationName)
         intent.putExtra("beaconDetected", beacons)
         LocalBroadcastManager.getInstance(TSApplicationContext.TSContext).sendBroadcast(intent)
     }
-
-
 }

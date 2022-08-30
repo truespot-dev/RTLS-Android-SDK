@@ -50,7 +50,7 @@ object TrueSpot : Application() {
 
     }
 
-    fun observeBeaconRanged(context: Context,listener: (beacons: MutableList<TSBeacon>)-> Unit): BroadcastReceiver
+    fun observeBeaconRanged(context: Context,listener: (beacons: HashMap<String, TSBeacon>?)-> Unit): BroadcastReceiver
     {
         return TSBeaconManagers.observeBeaconRanged(context,listener)
     }
