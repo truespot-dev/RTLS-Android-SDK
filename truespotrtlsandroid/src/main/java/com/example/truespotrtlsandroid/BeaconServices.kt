@@ -15,6 +15,7 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.observe
+import com.example.truespotrtlsandroid.TrueSpot.startScanning
 import com.example.truespotrtlsandroid.models.*
 import com.example.truespotrtlsandroid.models.Credentials
 import com.google.gson.Gson
@@ -26,148 +27,161 @@ import org.json.JSONArray
 import org.json.JSONObject
 
 
-
-
 object BeaconServices {
 
-    var locationManager: TSLocationManager? = null
-
-
-    fun authenticate()
+   fun authenticate(completion: (exception: Exception?) -> Unit)
     {
         val url = API.authURL+API.Endpoint.authorization+"?tenantId=${Credentials.tenantId}"
-
         // add parameter
         val formBody = FormBody.Builder().add("tenantId", Credentials.tenantId)
             .build()
-
         // creating request
         val request = Request.Builder().url(url)
             .addHeader("Authorization", "Basic ${Credentials.clientSecret}")
             .post(formBody)
             .build()
-
-        var client = OkHttpClient()
+        val client = OkHttpClient()
          client.newCall(request).enqueue(object : Callback {
-            override fun onFailure(call: Call, e: IOException) { }
+            override fun onFailure(call: Call, e: IOException) {
+                completion.invoke(e)
+            }
             override fun onResponse(call: Call, response: Response) {
-                if(response.isSuccessful)
-                {
-                    var auth : Authorization = Gson().fromJson(response.body?.charStream(),Authorization::class.java)
-                    Credentials.jwt = auth.jwt
-                    getAppinfo()
-                    getTrackingDevices { devices, exception -> }
+                try {
+                    if(response.isSuccessful)
+                    {
+                        val auth : Authorization = Gson().fromJson(response.body?.charStream(),Authorization::class.java)
+                        Credentials.jwt = auth.jwt
+                        getAppinfo()
+                        getTrackingDevices { devices, exception ->
+                            completion.invoke(exception)
+                        }
+                    }else {
+                        throw Exception(response.message)
+                    }
+                }catch (exception : Exception) {
+                    completion.invoke(exception)
                 }
             }
-
         })
-
     }
 
     fun getAppinfo()
     {
         val url = API.RTLSBaseURL+API.Endpoint.applications+"?self"
-
-        // add parameter
-        val formBody = FormBody.Builder().add("", "")
-            .build()
-
         // creating request
         val request = Request.Builder().url(url)
             .addHeader("Authorization", "Bearer ${Credentials.jwt}")
             .get()
             .build()
 
-        var client = OkHttpClient()
+        val client = OkHttpClient()
         client.newCall(request).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) { }
             override fun onResponse(call: Call, response: Response) {
-                if(response.isSuccessful)
-                {
-                    var tsApplication : TSApplication = Gson().fromJson(response.body?.charStream(),TSApplication::class.java)
+                if(response.isSuccessful) {
+                    val tsApplication : TSApplication = Gson().fromJson(response.body?.charStream(),TSApplication::class.java)
                     Credentials.appInfo = tsApplication
-                    /*locationManager = TSLocationManager(context, activity)
-                    locationManager?.startScanning()*/
+                    TSLocationManager.startScanning()
                 }
             }
-
         })
-
     }
 
-    fun getTrackingDevices(completion: (devices: MutableList<TSDevice>, exception: Exception?) -> Unit)
+    fun getTrackingDevices(completion: (devices: ArrayList<TSDevice>, exception: Exception?) -> Unit)
     {
         val url = API.RTLSBaseURL+API.Endpoint.trackingDevices
-
-        // add parameter
-        val formBody = FormBody.Builder().add("", "")
-            .build()
-
         // creating request
         val request = Request.Builder().url(url)
             .addHeader("Authorization", "Bearer ${Credentials.jwt}")
             .get()
             .build()
 
-        var client = OkHttpClient()
+        val client = OkHttpClient()
         client.newCall(request).enqueue(object : Callback {
-            override fun onFailure(call: Call, e: IOException) { }
+            override fun onFailure(call: Call, e: IOException) {
+                completion.invoke(arrayListOf(),e)
+            }
             override fun onResponse(call: Call, response: Response) {
-                if(response.isSuccessful)
-                {
-                    var tsDevice : TSDevice = Gson().fromJson(response.body?.charStream(),TSDevice::class.java)
-                    TSBeaconManagers.updateTrackingDevices(arrayListOf(tsDevice))
-                    completion.invoke(arrayListOf(tsDevice),response.message as Exception)
-
+                try {
+                    if(response.isSuccessful) {
+                        val result = Gson().fromJson(response.body?.charStream(),TSDevice::class.java) as ArrayList<TSDevice>
+                        val device = if(result.isNullOrEmpty()){arrayListOf()}else{result}
+                        TSBeaconManagers.updateTrackingDevices(device)
+                        completion.invoke(device,null)
+                    }
+                    else{
+                        throw Exception(response.message)
+                    }
+                }catch (exception : Exception) {
+                    completion.invoke(arrayListOf(),exception)
                 }
+            }
+        })
+    }
+
+    fun pair(assetIdentifier: String, assetType: String, tagId: String, completion: (devices: TSDevice?, exception: Exception?) -> Unit)
+    {
+        val url = API.RTLSBaseURL+API.Endpoint.trackingDevices+"/${tagId}/pairings"
+
+        // add parameter
+        val formBody = FormBody.Builder().add("assetIdentifier", assetIdentifier).add("assetType",assetType)
+            .build()
+
+        // creating request
+        val request = Request.Builder().url(url)
+            .addHeader("Authorization", "Bearer ${Credentials.jwt}")
+            .post(formBody)
+            .build()
+
+        val client = OkHttpClient()
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                completion.invoke(null,e)
+            }
+            override fun onResponse(call: Call, response: Response) {
+                try {
+                    if(response.isSuccessful) {
+                        val device = Gson().fromJson(response.body?.charStream(),TSDevice::class.java) as TSDevice
+                        completion.invoke(device,null)
+                    }else {
+                        throw Exception(response.message)
+                    }
+                }catch (exception : Exception) {
+                    completion.invoke(null,exception)
+                }
+            }
+        })
+    }
+
+    fun unpair(deviceID: String, pairingId: String,  completion: (exception: Exception?) -> Unit)
+    {
+        val url = API.RTLSBaseURL+API.Endpoint.trackingDevices+"/${deviceID}/pairings/${pairingId}"
+        // creating request
+        val request = Request.Builder().url(url)
+            .addHeader("Authorization", "Bearer ${Credentials.jwt}")
+            .delete()
+            .build()
+        val client = OkHttpClient()
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                completion.invoke(e)
+            }
+            override fun onResponse(call: Call, response: Response) {
+                try {
+                    if(response.isSuccessful) {
+                        completion.invoke(null)
+                    }else{
+                        throw Exception(response.message)
+                    }
+                }catch (exception : Exception){
+                    completion.invoke(exception)
+                }
+
             }
 
         })
 
     }
-
-    fun pair(pairRequestBody: PairRequestBody?, tagID: String, viewModelStoreOwner: ViewModelStoreOwner, viewLifecycleOwner: LifecycleOwner, context: Context, activity: Activity, completion: (devices: MutableList<TSDevice>, exception: Exception?) -> Unit) {
-        val beaconBaseServiceViewModel: BeaconBaseServiceViewModel = ViewModelProvider(viewModelStoreOwner,
-            BeaconBaseServiceViewModelFactory(
-                activity.application,
-                BaseApiHelper(BaseRetrofitBuilder.apiBaseService)))
-            .get(BeaconBaseServiceViewModel::class.java)
-        beaconBaseServiceViewModel.pair(pairRequestBody, tagID).observe(viewLifecycleOwner) {
-            when (it.status) {
-                Status.SUCCESS -> {
-                    val device = it.data
-                    completion(device as MutableList<TSDevice>,it.message as Exception)
-                }
-                Status.LOADING -> {
-                }
-                Status.ERROR -> {
-                }
-            }
-        }
-    }
-
-    fun unpair(deviceID: String, pairingId: String, viewModelStoreOwner: ViewModelStoreOwner, viewLifecycleOwner: LifecycleOwner, context: Context, activity: Activity,completion: (exception: Exception?) -> Unit) {
-        val beaconBaseServiceViewModel: BeaconBaseServiceViewModel = ViewModelProvider(viewModelStoreOwner,
-            BeaconBaseServiceViewModelFactory(
-                activity.application,
-                BaseApiHelper(BaseRetrofitBuilder.apiBaseService)))
-            .get(BeaconBaseServiceViewModel::class.java)
-        beaconBaseServiceViewModel.unpair(deviceID, pairingId).observe(viewLifecycleOwner) {
-            when (it.status) {
-                Status.SUCCESS -> {
-                    completion(it.message as Exception)
-                }
-                Status.LOADING -> {
-                }
-                Status.ERROR -> {
-                }
-            }
-        }
-    }
-
-
-
-
 }
 
 enum class TSEnvironment{

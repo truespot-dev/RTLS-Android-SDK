@@ -12,14 +12,13 @@ import com.example.truespotrtlsandroid.models.PairRequestBody
 import com.example.truespotrtlsandroid.models.TSDevice
 import java.util.*
 
-object TrueSpot {
-
+object TrueSpot : Application() {
     var isDebugMode = false
 
     init {
     }
 
-    fun configure(
+    fun configure(context: Context,
         tenantId: String,
         clientSecret: String,
         isDebugMode: Boolean,
@@ -27,20 +26,21 @@ object TrueSpot {
         TrueSpot.isDebugMode = isDebugMode
         Credentials.tenantId = tenantId
         Credentials.clientSecret = clientSecret
-        BeaconServices.authenticate()
+        TSApplicationContext.TSContext = context
+        BeaconServices.authenticate(completion)
     }
 
 
-    fun requestLocationPermission(context: Context, activity: Activity) {
-        TSLocationManager(context, activity).requestLocationPermission()
+    fun requestLocationPermission() {
+        TSLocationManager.requestLocationPermission()
     }
 
-    fun startScanning(context: Context, activity: Activity) {
-        TSLocationManager(context, activity).startScanning()
+    fun startScanning() {
+        TSLocationManager.startScanning()
     }
 
-    fun stopScanning(context: Context, activity: Activity) {
-        TSLocationManager(context, activity).stopScanning()
+    fun stopScanning() {
+        TSLocationManager.stopScanning()
     }
 
     fun launchTruedarMode(supportFragmentManager: FragmentManager, device: TSDevice) {
@@ -54,18 +54,18 @@ object TrueSpot {
         return TSBeaconManagers.observeBeaconRanged(listener,context)
     }
 
-    fun getTrackingDevices(completion: (devices: MutableList<TSDevice>, exception: Exception?) -> Unit,viewModelStoreOwner: ViewModelStoreOwner, viewLifecycleOwner: LifecycleOwner, context: Context, activity: Activity)
+    fun getTrackingDevices(completion: (devices: MutableList<TSDevice>, exception: Exception?) -> Unit)
     {
         BeaconServices.getTrackingDevices(completion)
     }
 
 
-    fun pair(assetIdentifier: String, assetType: String, tagId: String, viewModelStoreOwner: ViewModelStoreOwner, viewLifecycleOwner: LifecycleOwner, context: Context, activity: Activity,completion: (devices: MutableList<TSDevice>, exception: Exception?) -> Unit) {
-        BeaconServices.pair(PairRequestBody(assetIdentifier, assetType), tagId, viewModelStoreOwner, viewLifecycleOwner, context, activity,completion)
+    fun pair(assetIdentifier: String, assetType: String, tagId: String,completion: (devices: TSDevice?, exception: Exception?) -> Unit) {
+        BeaconServices.pair(assetIdentifier,assetType, tagId, completion)
     }
 
-    fun unpair(deviceID: String, pairingId: String, viewModelStoreOwner: ViewModelStoreOwner, viewLifecycleOwner: LifecycleOwner, context: Context, activity: Activity,completion: (exception: Exception?) -> Unit) {
-        BeaconServices.unpair(deviceID, pairingId, viewModelStoreOwner, viewLifecycleOwner, context, activity,completion)
+    fun unpair(deviceID: String, pairingId: String, completion: (exception: Exception?) -> Unit) {
+        BeaconServices.unpair(deviceID, pairingId,completion)
     }
 
 }

@@ -1,6 +1,7 @@
 package com.example.truespotrtlsandroid
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
@@ -25,25 +26,24 @@ import androidx.core.content.ContextCompat
 import com.example.truespotrtlsandroid.beacon.TSBeaconSighting
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
+import java.util.*
 import kotlin.collections.ArrayList
 
 
-class BeaconManagers(context: Context, activity: Activity) : ScanCallback() {
+object BeaconManagers : ScanCallback() {
 
-    var btManager: BluetoothManager? = null
-    var btAdapter: BluetoothAdapter? = null
-    var btScanner: BluetoothLeScanner? = null
-    var mLocation: Location? = null
-    var scanning = false
-    var mActivity: Activity? = null
-    var mContext: Context? = null
+    private var btManager: BluetoothManager? = null
+    private var btAdapter: BluetoothAdapter? = null
+    private var btScanner: BluetoothLeScanner? = null
+    private var mLocation: Location? = null
+    private var scanning = false
     var beaconUpdatedList: MutableList<TSBeaconSighting>? = ArrayList()
-    var fusedLocationProviderClient: FusedLocationProviderClient? = null
+    @SuppressLint("StaticFieldLeak")
+    private var fusedLocationProviderClient: FusedLocationProviderClient? = null
 
     init {
-        mContext = context
-        mActivity = activity
-        btManager = activity.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
+
+        btManager = TSApplicationContext.TSContext.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
         btAdapter = btManager?.adapter
         btScanner = btAdapter?.bluetoothLeScanner
         if (btAdapter != null && !btAdapter!!.isEnabled)
@@ -81,7 +81,7 @@ class BeaconManagers(context: Context, activity: Activity) : ScanCallback() {
                         val getBeaconList = getBeaconSightings()
                         val getCurrentLocation = getCurrentLocation()
                         if (!getBeaconList.isNullOrEmpty() && getCurrentLocation != null) {
-                            TSBeaconManagers.initializeBeaconObserver(mContext!!, getBeaconList, getCurrentLocation)
+                            TSBeaconManagers.initializeBeaconObserver(getBeaconList, getCurrentLocation)
                         }
                     }
                 }
@@ -172,20 +172,20 @@ class BeaconManagers(context: Context, activity: Activity) : ScanCallback() {
     private fun containsString(str1: String, str2: String): Boolean {
         var str1 = str1
         var str2 = str2
-        str1 = str1.replace(" ", "").toLowerCase()
-        str2 = str2.replace(" ", "").toLowerCase()
+        str1 = str1.replace(" ", "").lowercase(Locale.getDefault())
+        str2 = str2.replace(" ", "").lowercase(Locale.getDefault())
         str1 = str1.replace("-", "")
         str2 = str2.replace("-", "")
         return str1.contains(str2)
     }
 
-    fun getBeaconSightings(): MutableList<TSBeaconSighting> {
+    private fun getBeaconSightings(): MutableList<TSBeaconSighting> {
 
         val result: MutableList<TSBeaconSighting> = ArrayList()
         val values: Collection<TSBeaconSighting> = beaconUpdatedList!!
         if (values.isNotEmpty()) {
             for (s in values) {
-                if (s.getBeaconId() != null && !TextUtils.isEmpty(s.getBeaconId())) {
+                if (s.beaconId != null && !TextUtils.isEmpty(s.getBeaconId())) {
                     result.add(TSBeaconSighting(s))
                 }
             }
@@ -194,12 +194,12 @@ class BeaconManagers(context: Context, activity: Activity) : ScanCallback() {
     }
 
        private fun getCurrentLocation(): Location? {
-        fusedLocationProviderClient = mActivity?.let {
+        fusedLocationProviderClient = TSApplicationContext.TSContext?.let {
             LocationServices.getFusedLocationProviderClient(
                 it
             )
         }
-        if (mContext?.let {
+        if (TSApplicationContext.TSContext?.let {
                 checkRequiredPermission(
                     Manifest.permission.ACCESS_FINE_LOCATION,
                     it
@@ -214,10 +214,10 @@ class BeaconManagers(context: Context, activity: Activity) : ScanCallback() {
 
                 }
                     ?.addOnFailureListener {
-                        Toast.makeText(mContext, "Failure Location", Toast.LENGTH_LONG).show()
+                        Toast.makeText(TSApplicationContext.TSContext, "Failure Location", Toast.LENGTH_LONG).show()
                     }
             } else {
-                Toast.makeText(mContext, "Turn On Location", Toast.LENGTH_LONG).show()
+                Toast.makeText(TSApplicationContext.TSContext, "Turn On Location", Toast.LENGTH_LONG).show()
             }
         } else {
 
@@ -227,13 +227,13 @@ class BeaconManagers(context: Context, activity: Activity) : ScanCallback() {
 
     private fun isLocationEnabled(): Boolean {
         val locationManager: LocationManager =
-            mContext?.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+            TSApplicationContext.TSContext?.getSystemService(Context.LOCATION_SERVICE) as LocationManager
         return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) || locationManager.isProviderEnabled(
             LocationManager.NETWORK_PROVIDER
         )
     }
 
-    fun checkRequiredPermission(permission: String, context: Context): Boolean? {
+    private fun checkRequiredPermission(permission: String, context: Context): Boolean? {
         return ContextCompat.checkSelfPermission(
             context,
             permission

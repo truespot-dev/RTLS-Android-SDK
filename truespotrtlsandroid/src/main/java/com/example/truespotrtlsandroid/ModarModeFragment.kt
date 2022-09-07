@@ -121,7 +121,7 @@ class ModarModeFragment(var mCurrentTag : String) :  BottomSheetDialogFragment()
         }
 
         calculatTagLocation()
-        beaconManager = BeaconManagers(requireContext(),requireActivity())
+        beaconManager = BeaconManagers
 
         binding.tvCurentTag.text = mCurrentTag
 
