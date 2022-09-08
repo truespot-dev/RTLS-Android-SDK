@@ -21,13 +21,36 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        TrueSpot.configure(this,"600efa6da13b840ab04ad9c2","1234567890",true){
+        TrueSpot.configure(
+            this,
+            "5da7715dd7eafd2aec878b6c",
+            "x8KKW+fIrgikKASLL0CxzqmxAbG9iz6ZUe32bRq+6UYszf8PuWQoa9jQaTY+gLla",
+            true
+        ) {
             if (it == null) {
-                Log.i("Configure","Success")
+                Log.i("Configure", "Success")
             } else {
-                Log.i("Configure","Error:${it}")
+                Log.i("Configure", "Error:${it}")
             }
         }
+
+        TrueSpot.getTrackingDevices { devices, exception ->
+            if (exception == null) {
+                Log.i("Configure", "Success")
+
+                val device = devices[1]
+                TrueSpot.pair(device.assetIdentifier, device.assetType, device.tagIdentifier) { devices, exception ->
+                    if (exception == null) {
+                        Log.i("Paired", "Success")
+                    } else {
+                        Log.i("Configure", "Error:${exception}")
+                    }
+                }
+            } else {
+                Log.i("Configure", "Error:${exception}")
+            }
+        }
+
 
         //TrueSpot.requestLocationPermission()
 
