@@ -18,11 +18,13 @@ object TrueSpot : Application() {
     init {
     }
 
-    fun configure(context: Context,
+    fun configure(
+        context: Context,
         tenantId: String,
         clientSecret: String,
         isDebugMode: Boolean,
-        completion: (exception: Exception?) -> Unit) {
+        completion: (exception: Exception?) -> Unit
+    ) {
         TrueSpot.isDebugMode = isDebugMode
         Credentials.tenantId = tenantId
         Credentials.clientSecret = clientSecret
@@ -50,23 +52,28 @@ object TrueSpot : Application() {
 
     }
 
-    fun observeBeaconRanged(context: Context,listener: (beacons: HashMap<String, TSBeacon>?)-> Unit): BroadcastReceiver
-    {
-        return TSBeaconManagers.observeBeaconRanged(context,listener)
+    fun observeBeaconRanged(
+        listener: (beacons: MutableList<TSBeacon>) -> Unit,
+        context: Context
+    ): BroadcastReceiver {
+        return TSBeaconManagers.observeBeaconRanged(listener, context)
     }
 
-    fun getTrackingDevices(completion: (devices: MutableList<TSDevice>, exception: Exception?) -> Unit)
-    {
+    fun getTrackingDevices(completion: (devices: MutableList<TSDevice>, exception: Exception?) -> Unit) {
         BeaconServices.getTrackingDevices(completion)
     }
 
-
-    fun pair(assetIdentifier: String, assetType: String, tagId: String,completion: (devices: TSDevice?, exception: Exception?) -> Unit) {
-        BeaconServices.pair(assetIdentifier,assetType, tagId, completion)
+    fun pair(
+        assetIdentifier: String,
+        assetType: String,
+        tagId: String,
+        completion: (devices: TSDevice?, exception: Exception?) -> Unit
+    ) {
+        BeaconServices.pair(assetIdentifier, assetType, tagId, completion)
     }
 
     fun unpair(deviceID: String, pairingId: String, completion: (exception: Exception?) -> Unit) {
-        BeaconServices.unpair(deviceID, pairingId,completion)
+        BeaconServices.unpair(deviceID, pairingId, completion)
     }
 
 }
