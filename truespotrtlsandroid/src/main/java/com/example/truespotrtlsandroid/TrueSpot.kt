@@ -44,8 +44,9 @@ object TrueSpot : Application() {
         TSLocationManager.stopScanning()
     }
 
-    fun launchTruedarMode(supportFragmentManager: FragmentManager, device: TSDevice) {
-        val bottomSheetFragment = ModarModeFragment(device.tagIdentifier)
+    fun launchTruedarMode(supportFragmentManager: FragmentManager, tagIdentifier: String,context: Context) {
+        TSApplicationContext.TSContext = context
+        val bottomSheetFragment = ModarModeFragment(tagIdentifier)
         bottomSheetFragment.show(supportFragmentManager, ModarModeFragment.TAG)
 
     }
