@@ -85,7 +85,7 @@ object TSBeaconManagers {
                     }
 
                     if (rssi != 0) {
-                        if (rssi >= savedRSSI) {
+                        if (rssi != savedRSSI) {
                             mBeacons[key.toString()] = beacon
                         }
                         //Update modar if Beacon changes

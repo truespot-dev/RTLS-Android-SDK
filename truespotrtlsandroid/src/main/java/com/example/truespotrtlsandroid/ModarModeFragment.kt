@@ -147,9 +147,9 @@ class ModarModeFragment(var mCurrentTag : String) :  BottomSheetDialogFragment()
                 Log.i("result1","--->${Gson().toJson(result1)}")
                 val result : Collection<TSBeacon> = TSBeaconManagers.getBeaconWithIdentifiers()!!.values
                 Log.i("findTag","--->${Gson().toJson(result)}")
-                if (result1 != null) {
-                    var tempData : TSBeaconSighting? = null
-                    for (data : TSBeaconSighting in result1) {
+                if (result != null) {
+                    var tempData : TSBeacon? = null
+                    for (data : TSBeacon in result) {
                         if (mCurrentTag.equals(data.getBeaconIdentifier())) {
                             tempData = data
                             break
