@@ -19,10 +19,10 @@ object TrueSpot : Application() {
     }
 
     fun configure(context: Context,
-        tenantId: String,
-        clientSecret: String,
-        isDebugMode: Boolean,
-        completion: (exception: Exception?) -> Unit) {
+                  tenantId: String,
+                  clientSecret: String,
+                  isDebugMode: Boolean,
+                  completion: (exception: Exception?) -> Unit) {
         TrueSpot.isDebugMode = isDebugMode
         Credentials.tenantId = tenantId
         Credentials.clientSecret = clientSecret
