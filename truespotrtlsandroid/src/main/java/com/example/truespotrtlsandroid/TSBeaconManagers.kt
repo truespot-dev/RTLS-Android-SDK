@@ -28,9 +28,8 @@ object TSBeaconManagers {
     fun observeBeaconRanged(context: Context,listener: (beacons: HashMap<String, TSBeacon>?)->Unit): BroadcastReceiver {
         val mBeaconsReceiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
-                if(intent != null)
-                {
-                    listener.invoke(intent.getSerializableExtra(beaconDetected) as HashMap<String, TSBeacon>?)
+                intent?.let { it ->
+                    listener.invoke(it.getSerializableExtra(beaconDetected) as HashMap<String, TSBeacon>?)
                 }
             }
         }
@@ -41,9 +40,8 @@ object TSBeaconManagers {
     fun observeBeaconRSSI(context: Context,listener: (beacons: HashMap<String, TSBeacon>?)->Unit): BroadcastReceiver {
         val mBeaconRSSIReceiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
-                if(intent != null)
-                {
-                    listener.invoke(intent!!.getSerializableExtra(beaconRSSIUpdate) as HashMap<String, TSBeacon>?)
+                intent?.let {it ->
+                    listener.invoke(it.getSerializableExtra(beaconRSSIUpdate) as HashMap<String, TSBeacon>?)
                 }
             }
         }
