@@ -21,13 +21,13 @@ class MainActivity : AppCompatActivity() {
             if (it == null) {
                 Log.i("Configure", "Success")
             } else {
-                Log.i("Configure", "Error:${it}")
-            }
-
-            TrueSpot.getTrackingDevices { devices, exception ->
-
+                launchModarMode()
             }
         }
+    }
+
+    fun launchModarMode() {
+        TrueSpot.launchTruedarMode(supportFragmentManager, "0000-11RNS", this)
     }
 
 }

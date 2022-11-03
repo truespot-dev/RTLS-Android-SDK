@@ -19,12 +19,14 @@ import com.example.truespotrtlsandroid.TrueSpot.startScanning
 import com.example.truespotrtlsandroid.models.*
 import com.example.truespotrtlsandroid.models.Credentials
 import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import okhttp3.*
 import java.io.IOException
 import okhttp3.HttpUrl
 import org.json.JSONArray
 
 import org.json.JSONObject
+import java.lang.reflect.Type
 
 
 object BeaconServices {
@@ -103,13 +105,25 @@ object BeaconServices {
             }
             override fun onResponse(call: Call, response: Response) {
                 try {
-                    if(response.isSuccessful) {
-                        val result = Gson().fromJson(response.body?.charStream(),TSDevice::class.java) as ArrayList<TSDevice>
-                        val device = if(result.isNullOrEmpty()){arrayListOf()}else{result}
+                    if (response.isSuccessful) {
+                        val responseBody = response.peekBody(Long.MAX_VALUE)
+                        val deviceListType: Type = object : TypeToken<ArrayList<TSDevice>>() {}.type
+
+                        val result = Gson().fromJson<ArrayList<TSDevice>>(
+                            responseBody.string(),
+                            deviceListType
+                        )
+
+                        val device = if (result.isNullOrEmpty()) {
+                            arrayListOf()
+                        } else {
+                            val device = TSDevice()
+                            device.tagIdentifier = "0000-11RNS"
+                            result
+                        }
                         TSBeaconManagers.updateTrackingDevices(device)
-                        completion.invoke(device,null)
-                    }
-                    else{
+                        completion.invoke(device, null)
+                    } else {
                         throw Exception(response.message)
                     }
                 }catch (exception : Exception) {
