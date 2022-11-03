@@ -56,7 +56,7 @@ object TrueSpot : Application() {
         return TSBeaconManagers.observeBeaconRanged(context,listener)
     }
 
-    fun getTrackingDevices(completion: (devices: MutableList<TSDevice>, exception: Exception?) -> Unit,viewModelStoreOwner: ViewModelStoreOwner, viewLifecycleOwner: LifecycleOwner, context: Context, activity: Activity)
+    fun getTrackingDevices(completion: (devices: MutableList<TSDevice>, exception: Exception?) -> Unit)
     {
         BeaconServices.getTrackingDevices(completion)
     }

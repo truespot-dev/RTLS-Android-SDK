@@ -193,7 +193,7 @@ enum class TSEnvironment{
 
 object API {
 
-    var  environment: TSEnvironment = TSEnvironment.dev
+    var  environment: TSEnvironment = TSEnvironment.prod
     val authURL = when(environment){
         TSEnvironment.dev -> "https://authprovider-d-us-c-api.azurewebsites.net/"
         TSEnvironment.prod -> "https://auth.truespot.com/"
