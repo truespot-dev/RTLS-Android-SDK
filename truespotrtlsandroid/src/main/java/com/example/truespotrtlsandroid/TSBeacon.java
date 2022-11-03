@@ -2,6 +2,7 @@ package com.example.truespotrtlsandroid;
 
 import com.example.truespotrtlsandroid.beacon.TSBeaconSighting;
 import com.example.truespotrtlsandroid.models.BaseJSONModel;
+import com.example.truespotrtlsandroid.models.Beacon;
 import com.example.truespotrtlsandroid.models.TSDevice;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -209,6 +210,9 @@ public class TSBeacon extends BaseJSONModel {
     public void update(TSBeacon other) {
         this.RSSI = other.getRSSI();
         this.timeStamp = other.getTimeStamp();
+    }
+    public void update(Beacon other) {
+        this.RSSI = other.getRssi();
     }
 
     public boolean alreadyAssigned() {

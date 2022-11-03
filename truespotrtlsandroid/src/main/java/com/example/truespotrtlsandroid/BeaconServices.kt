@@ -8,6 +8,10 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import okhttp3.*
 import java.io.IOException
+import okhttp3.HttpUrl
+import org.json.JSONArray
+
+import org.json.JSONObject
 import java.lang.reflect.Type
 
 

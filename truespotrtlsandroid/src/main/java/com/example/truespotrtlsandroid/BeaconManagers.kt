@@ -90,11 +90,38 @@ object BeaconManagers : ScanCallback(),LocationListener {
                     ))
 
                 }
-                if(iBeaconsMap?.size!! > 0){
-                    TSLocationManager.locationManager(iBeaconsMap)
-                    TSBeaconManagers.initializeBeaconObserver()
+
+            }
+            else{
+                sighting.update(beacon)
+                if (beacon != null)
+                {
+                    if(beacon.rssi >= sighting.rssi){
+                        iBeaconsMap?.put(
+                            result.device.name,
+                            TSBeaconSighting(
+                                beacon.device?.name,
+                                beacon.rssi,
+                                beacon.device?.address,
+                                IBeacon(beacon).uuid,
+                                IBeacon(beacon).major,
+                                IBeacon(beacon).minor,
+                                getCurrentLocation?.latitude ?: 0.0,
+                                getCurrentLocation?.longitude ?: 0.0,
+                                getCurrentLocation?.accuracy ?: 0f
+                            )
+                        )
+
+                    }
 
                 }
+            }
+
+
+            if(iBeaconsMap?.size!! > 0){
+                TSLocationManager.locationManager(iBeaconsMap)
+                TSBeaconManagers.initializeBeaconObserver()
+
             }
            /* if (!beaconList.isNullOrEmpty()) {
                 beaconList.forEach {

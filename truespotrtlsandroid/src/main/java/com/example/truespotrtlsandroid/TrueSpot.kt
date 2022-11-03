@@ -18,13 +18,11 @@ object TrueSpot : Application() {
     init {
     }
 
-    fun configure(
-        context: Context,
-        tenantId: String,
-        clientSecret: String,
-        isDebugMode: Boolean,
-        completion: (exception: Exception?) -> Unit
-    ) {
+    fun configure(context: Context,
+                  tenantId: String,
+                  clientSecret: String,
+                  isDebugMode: Boolean,
+                  completion: (exception: Exception?) -> Unit) {
         TrueSpot.isDebugMode = isDebugMode
         Credentials.tenantId = tenantId
         Credentials.clientSecret = clientSecret
@@ -46,8 +44,9 @@ object TrueSpot : Application() {
         TSLocationManager.stopScanning()
     }
 
-    fun launchTruedarMode(supportFragmentManager: FragmentManager, device: TSDevice) {
-        val bottomSheetFragment = ModarModeFragment(device.tagIdentifier)
+    fun launchTruedarMode(supportFragmentManager: FragmentManager, tagIdentifier: String,context: Context) {
+        TSApplicationContext.TSContext = context
+        val bottomSheetFragment = ModarModeFragment(tagIdentifier)
         bottomSheetFragment.show(supportFragmentManager, ModarModeFragment.TAG)
 
     }
@@ -61,7 +60,8 @@ object TrueSpot : Application() {
         }
     }
 
-    fun getTrackingDevices(completion: (devices: MutableList<TSDevice>, exception: Exception?) -> Unit) {
+    fun getTrackingDevices(completion: (devices: MutableList<TSDevice>, exception: Exception?) -> Unit)
+    {
         BeaconServices.getTrackingDevices(completion)
     }
 

@@ -2,10 +2,8 @@ package com.example.truespotrtlsandroidsdk
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.os.CountDownTimer
-import android.os.Handler
-import android.os.Looper
 import android.util.Log
+import com.example.truespotrtlsandroid.TrueSpot
 import android.widget.Button
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
@@ -20,6 +18,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        // Latest update committed
 
         TrueSpot.configure(
             this,
@@ -30,30 +29,12 @@ class MainActivity : AppCompatActivity() {
             if (it == null) {
                 Log.i("Configure", "Success")
             } else {
-                Log.i("Configure", "Error:${it}")
             }
         }
+    }
 
-        TrueSpot.getTrackingDevices { devices, exception ->
-            if (exception == null) {
-                Log.i("Configure", "Success")
-
-                val device = devices[1]
-                TrueSpot.pair(device.assetIdentifier, device.assetType, device.tagIdentifier) { devices, exception ->
-                    if (exception == null) {
-                        Log.i("Paired", "Success")
-                    } else {
-                        Log.i("Configure", "Error:${exception}")
-                    }
-                }
-            } else {
-                Log.i("Configure", "Error:${exception}")
-            }
-        }
-
-
-        //TrueSpot.requestLocationPermission()
-
+    fun launchModarMode() {
+        TrueSpot.launchTruedarMode(supportFragmentManager, "0000-11RNS", this)
     }
 
 }

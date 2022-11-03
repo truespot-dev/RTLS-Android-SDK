@@ -85,7 +85,7 @@ class ModarModeFragment(var mCurrentTag : String) :  BottomSheetDialogFragment()
             override fun run() {
                 if (this@ModarModeFragment.isAdded){
                     Log.e("status","check Update-----> $isBeepSound")
-                    requireFragmentManager().beginTransaction().detach(this@ModarModeFragment).attach(this@ModarModeFragment).commit()
+                    requireActivity().supportFragmentManager.beginTransaction().detach(this@ModarModeFragment).attach(this@ModarModeFragment).commit()
                 }
 
                 mHandler.postDelayed(this,10000)
@@ -145,7 +145,7 @@ class ModarModeFragment(var mCurrentTag : String) :  BottomSheetDialogFragment()
                 beaconManager!!.startMonitoring()
                 var result1 : MutableList<TSBeaconSighting>? = beaconManager!!.beaconUpdatedList
                 Log.i("result1","--->${Gson().toJson(result1)}")
-              val result : Collection<TSBeacon> = TSBeaconManagers.getBeaconWithIdentifiers()!!.values
+                val result : Collection<TSBeacon> = TSBeaconManagers.getBeaconWithIdentifiers()!!.values
                 Log.i("findTag","--->${Gson().toJson(result)}")
                 if (result != null) {
                     var tempData : TSBeacon? = null
