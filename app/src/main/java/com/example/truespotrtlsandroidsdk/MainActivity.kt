@@ -4,6 +4,14 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import com.example.truespotrtlsandroid.TrueSpot
+import android.widget.Button
+import android.widget.Toast
+import androidx.recyclerview.widget.RecyclerView
+import com.example.truespotrtlsandroid.*
+import com.example.truespotrtlsandroid.CompletionCallBack
+import com.example.truespotrtlsandroid.beacon.TSBeaconSighting
+import com.google.gson.Gson
+import kotlin.Unit.toString
 
 class MainActivity : AppCompatActivity() {
 
@@ -21,7 +29,6 @@ class MainActivity : AppCompatActivity() {
             if (it == null) {
                 Log.i("Configure", "Success")
             } else {
-                launchModarMode()
             }
         }
     }
